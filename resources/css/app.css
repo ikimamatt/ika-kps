@@ -1,0 +1,169 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+
+@theme {
+  --color-primary: #092b5a;
+  --color-primary-container: #001739;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #acc7ff;
+  --color-primary-fixed: #d7e2ff;
+  --color-primary-fixed-dim: #acc7ff;
+  --color-on-primary-fixed: #001a40;
+  --color-on-primary-fixed-variant: #2b4676;
+
+  --color-secondary: #0084c7;
+  --color-secondary-container: #00a3e0;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #004b69;
+  --color-secondary-fixed: #c6e7ff;
+  --color-secondary-fixed-dim: #38bdf8;
+  --color-on-secondary-fixed: #001e2d;
+  --color-on-secondary-fixed-variant: #004c6b;
+
+  --color-tertiary: #d92525;
+  --color-tertiary-container: #fee2e2;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #7f1d1d;
+  --color-tertiary-fixed: #ffdad6;
+  --color-tertiary-fixed-dim: #ffb4ab;
+  --color-on-tertiary-fixed: #410002;
+  --color-on-tertiary-fixed-variant: #93000b;
+
+  --color-surface: #f6fafe;
+  --color-surface-dim: #d6dade;
+  --color-surface-bright: #f6fafe;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f0f4f8;
+  --color-surface-container: #eaeef2;
+  --color-surface-container-high: #e4e9ed;
+  --color-surface-container-highest: #dfe3e7;
+  --color-surface-variant: #dfe3e7;
+
+  --color-on-surface: #171c1f;
+  --color-on-surface-variant: #44474f;
+  --color-inverse-surface: #2c3134;
+  --color-inverse-on-surface: #edf1f5;
+  --color-outline: #747780;
+  --color-outline-variant: #c4c6d0;
+  --color-surface-tint: #435e90;
+
+  --color-background: #f6fafe;
+  --color-on-background: #171c1f;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2.5rem;
+  --spacing-gutter: 1.5rem;
+  --spacing-margin: 2rem;
+
+  --font-headline-sm: "Plus Jakarta Sans", sans-serif;
+  --font-headline-md: "Plus Jakarta Sans", sans-serif;
+  --font-headline-lg: "Plus Jakarta Sans", sans-serif;
+  --font-headline-xl: "Plus Jakarta Sans", sans-serif;
+  --font-display-lg: "Plus Jakarta Sans", sans-serif;
+  --font-display-lg-mobile: "Plus Jakarta Sans", sans-serif;
+  --font-title-md: "Plus Jakarta Sans", sans-serif;
+  --font-body-lg: "Plus Jakarta Sans", sans-serif;
+  --font-body-md: "Plus Jakarta Sans", sans-serif;
+  --font-body-sm: "Plus Jakarta Sans", sans-serif;
+  --font-label-lg: "Plus Jakarta Sans", sans-serif;
+  --font-label-md: "Plus Jakarta Sans", sans-serif;
+  --font-label-sm: "Plus Jakarta Sans", sans-serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer utilities {
+  .font-display-lg {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 48px;
+    line-height: 56px;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+  }
+  .font-display-lg-mobile {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 36px;
+    line-height: 44px;
+    letter-spacing: -0.01em;
+    font-weight: 800;
+  }
+  .font-headline-xl {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -0.015em;
+    font-weight: 700;
+  }
+  .font-headline-lg {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+  }
+  .font-headline-md {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+  }
+  .font-headline-sm {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  .font-title-md {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  .font-body-lg {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    line-height: 26px;
+    font-weight: 400;
+  }
+  .font-body-md {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    font-weight: 400;
+  }
+  .font-body-sm {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: 400;
+  }
+  .font-label-lg {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.01em;
+    font-weight: 600;
+  }
+  .font-label-md {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.02em;
+    font-weight: 600;
+  }
+  .font-label-sm {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+  }
+}
