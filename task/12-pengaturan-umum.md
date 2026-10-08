@@ -1,6 +1,6 @@
 # ⚙️ Task 12: Pengaturan Umum Website & Konfigurasi Dinamis
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed)  
 > **Prioritas:** 🟢 Low / Management & Polish (Fase 4)  
 > **Modul PRD:** Modul 12: Pengaturan Umum (BARU)  
 > **Ketergantungan:** Task 01 (Autentikasi & Multi-Role)  
@@ -234,11 +234,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan migrasi tabel `settings`
-- [ ] Atur Model `Setting` dengan static method cache `get()` dan `set()`
-- [ ] Buat Form Request `UpdateSettingsRequest`
-- [ ] Buat Controller `AdminSettingController`
-- [ ] Buat tampilan Blade `admin/settings/index.blade.php` (Tampilan tab modern)
-- [ ] Buat seeder konfigurasi awal dan jalankan
-- [ ] Tulis test TDD dan jalankan
-- [ ] Format kode: `vendor/bin/pint --dirty --format agent`
+- [x] Jalankan migrasi tabel `settings`
+- [x] Atur Model `Setting` dengan static method cache `get()` dan `set()`
+- [x] Buat Form Request `UpdateSettingsRequest`
+- [x] Buat Controller `AdminSettingController`
+- [x] Buat tampilan Blade `admin/settings/index.blade.php` (Tampilan tab modern)
+- [x] Buat seeder konfigurasi awal dan jalankan
+- [x] Tulis test TDD dan jalankan (4 tests passing)
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`

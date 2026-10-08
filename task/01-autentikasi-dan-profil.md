@@ -1,6 +1,6 @@
 # 🔐 Task 01: Autentikasi, Multi-Role & Manajemen Profil Pengguna
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed) ✅  
 > **Prioritas:** 🔴 Critical / Foundation (Fase 1)  
 > **Modul PRD:** Modul 1: Autentikasi & Profil Pengguna  
 > **Ketergantungan:** Tidak ada (Fondasi Awal)  
@@ -15,54 +15,32 @@ Modul ini bertanggung jawab atas sistem autentikasi, otorisasi berbasis peran (M
 1. **Autentikasi Standar**: Register akun baru, Login (dengan Remember Me), Logout, Lupa Password & Reset Password.
 2. **Multi-Role Authorization**: Peran `admin`, `pengurus`, dan `alumni`. Middleware proteksi rute admin.
 3. **Self-Service Profil**: Alumni yang login dapat melihat dan memperbarui informasi profilnya, kontak telepon, link sosial media, dan foto avatar.
-4. **Relasi User ke Alumnus**: Hubungan 1-to-1 opsional antara tabel `users` dan `alumni`.
+4. **Relasi User ke Alumnus**: Hubungan 1-to-1 antara tabel `users` dan `alumni` (dibuat bersamaan saat registrasi alumni terpadu, status akun awal `pending`).
 
 ---
 
-## 2. Perintah Migration Database
+## 2. Pembaruan Skema Basis Data (Langsung pada Migration Dasar)
 
-Jalankan perintah pembuatan migrasi untuk menambahkan kolom pendukung di tabel `users`:
+> [!IMPORTANT]
+> **Aturan**: Jangan membuat file migrasi `add_..._to_users_table`. Perbarui langsung file migrasi dasar pembuatan tabel di `database/migrations/0001_01_01_000000_create_users_table.php`.
 
-```bash
-php artisan make:migration add_roles_and_profile_fields_to_users_table --table=users
-```
-
-### Kode Migrasi (`database/migrations/xxxx_xx_xx_add_roles_and_profile_fields_to_users_table.php`):
+### Definisi Skema Tabel `users`:
 
 ```php
-<?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('alumni')->after('password')->index(); // 'admin', 'pengurus', 'alumni'
-            $table->foreignId('alumnus_id')->nullable()->after('role')->constrained('alumni')->nullOnDelete();
-            $table->string('phone')->nullable()->after('email');
-            $table->string('avatar_url')->nullable()->after('phone');
-            $table->string('status')->default('active')->after('avatar_url'); // 'active', 'suspended'
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['alumnus_id']);
-            $table->dropColumn(['role', 'alumnus_id', 'phone', 'avatar_url', 'status']);
-        });
-    }
-};
+Schema::create('users', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->timestamp('email_verified_at')->nullable();
+    $table->string('password');
+    $table->string('role')->default('alumni')->index(); // 'admin', 'pengurus', 'alumni'
+    $table->string('status')->default('pending')->index(); // 'pending', 'active', 'rejected', 'suspended'
+    $table->text('rejection_reason')->nullable();
+    $table->string('phone')->nullable();
+    $table->string('avatar_url')->nullable();
+    $table->rememberToken();
+    $table->timestamps();
+});
 ```
 
 ---
@@ -70,9 +48,19 @@ return new class extends Migration
 ## 3. Model, Factory & Seeder
 
 ### A. Update Model `app/Models/User.php`
-- Tambahkan properti `$fillable`: `'name'`, `'email'`, `'password'`, `'role'`, `'alumnus_id'`, `'phone'`, `'avatar_url'`, `'status'`.
-- Tambahkan helper method:
+- Tambahkan properti `$fillable`: `'name'`, `'email'`, `'password'`, `'role'`, `'status'`, `'rejection_reason'`, `'phone'`, `'avatar_url'`.
+- Tambahkan helper & relation methods:
   ```php
+  public function alumnus(): \Illuminate\Database\Eloquent\Relations\HasOne
+  {
+      return $this->hasOne(Alumnus::class);
+  }
+
+  public function isApproved(): bool
+  {
+      return $this->status === 'active';
+  }
+
   public function isAdmin(): bool
   {
       return $this->role === 'admin';
@@ -81,11 +69,6 @@ return new class extends Migration
   public function isPengurus(): bool
   {
       return in_array($this->role, ['admin', 'pengurus']);
-  }
-
-  public function alumnus(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-  {
-      return $this->belongsTo(Alumnus::class);
   }
   ```
 
@@ -278,13 +261,13 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan `php artisan make:migration add_roles_and_profile_fields_to_users_table`
-- [ ] Tulis skema migrasi dan jalankan `php artisan migrate`
-- [ ] Buat middleware `EnsureUserHasRole` (`app/Http/Middleware/EnsureUserHasRole.php`)
-- [ ] Daftarkan alias middleware `role` di `bootstrap/app.php`
-- [ ] Buat Form Request `UpdateProfileRequest` & `RegisterRequest`
-- [ ] Implementasikan `AuthController` dan `ProfileController`
-- [ ] Buat tampilan Blade UI: `auth/login.blade.php`, `auth/register.blade.php`, `profile/show.blade.php`, `profile/edit.blade.php`
-- [ ] Buat file seeder `UserSeeder.php` dan daftarkan di `DatabaseSeeder.php`
-- [ ] Terapkan siklus TDD: tulis test ➔ pastikan merah ➔ selesaikan kode ➔ pastikan hijau
-- [ ] Jalankan `vendor/bin/pint --dirty --format agent` untuk standarisasi styling kode
+- [x] Perbarui file migrasi dasar `database/migrations/0001_01_01_000000_create_users_table.php` secara langsung (tanpa membuat file migrasi add_to_...)
+- [x] Jalankan `php artisan migrate:fresh --seed`
+- [x] Buat middleware `EnsureUserHasRole` (`app/Http/Middleware/EnsureUserHasRole.php`)
+- [x] Daftarkan alias middleware `role` di `bootstrap/app.php`
+- [x] Buat Form Request `UpdateProfileRequest` & `RegisterRequest`
+- [x] Implementasikan `AuthController` dan `ProfileController`
+- [x] Buat tampilan Blade UI: `auth/login.blade.php`, `auth/register.blade.php`, `profile/show.blade.php`, `profile/edit.blade.php`
+- [x] Buat file seeder `UserSeeder.php` dan daftarkan di `DatabaseSeeder.php`
+- [x] Terapkan siklus TDD: tulis test ➔ pastikan merah ➔ selesaikan kode ➔ pastikan hijau
+- [x] Jalankan `vendor/bin/pint --dirty --format agent` untuk standarisasi styling kode

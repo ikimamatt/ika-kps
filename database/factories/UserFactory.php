@@ -29,8 +29,41 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'role' => 'alumni',
+            'phone' => fake()->phoneNumber(),
+            'status' => 'active',
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Indicate that the user has admin role.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+        ]);
+    }
+
+    /**
+     * Indicate that the user has pengurus role.
+     */
+    public function pengurus(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'pengurus',
+        ]);
+    }
+
+    /**
+     * Indicate that the user has alumni role.
+     */
+    public function alumni(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'alumni',
+        ]);
     }
 
     /**
@@ -40,6 +73,16 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the user status is pending approval.
+     */
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'pending',
         ]);
     }
 }

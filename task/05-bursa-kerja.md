@@ -1,6 +1,6 @@
 # 💼 Task 05: Bursa Kerja (Karir) & Peluang Alumni
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai ✅  
 > **Prioritas:** 🟠 High / Core Content (Fase 2)  
 > **Modul PRD:** Modul 5: Bursa Kerja & Lowongan (CRUD)  
 > **Ketergantungan:** Task 01 (Autentikasi), Task 02 (Manajemen Alumni)  
@@ -17,65 +17,36 @@ Modul Bursa Kerja memfasilitasi pertukaran informasi karir dan kesempatan kerja 
 
 ---
 
-## 2. Perintah Migration Database
+## 2. Pembaruan Skema Basis Data (Langsung pada Migration Dasar)
 
-Jalankan perintah migrasi:
+> [!IMPORTANT]
+> **Aturan**: Jangan membuat file migrasi `enhance_job_vacancies_table_with_slug_and_status` atau migrasi add lainnya. Perbarui langsung skema dasar pada file `database/migrations/2026_10_06_071756_create_job_vacancies_table.php`.
 
-```bash
-php artisan make:migration enhance_job_vacancies_table_with_slug_and_status --table=job_vacancies
-```
-
-### Kode Migrasi (`database/migrations/xxxx_xx_xx_enhance_job_vacancies_table_with_slug_and_status.php`):
+### Definisi Skema Tabel `job_vacancies`:
 
 ```php
-<?php
+Schema::create('job_vacancies', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('alumnus_id')->nullable()->constrained('alumni')->cascadeOnDelete();
+    $table->string('title');
+    $table->string('slug')->unique();
+    $table->string('company');
+    $table->string('alumni_info')->nullable();
+    $table->string('job_type')->default('Full Time'); // Full Time, Part Time, Magang, Kontrak
+    $table->string('type_badge_class')->nullable();
+    $table->string('location')->default('Balikpapan');
+    $table->string('salary_range')->nullable();
+    $table->text('description');
+    $table->text('requirements')->nullable();
+    $table->date('deadline')->nullable();
+    $table->string('posted_time_info')->nullable();
+    $table->string('apply_url')->nullable();
+    $table->string('status')->default('pending')->index(); // draft, pending, active, expired, closed
+    $table->timestamps();
+    $table->softDeletes();
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('job_vacancies', function (Blueprint $table) {
-            $table->string('slug')->nullable()->unique()->after('title');
-            $table->foreignId('alumnus_id')->nullable()->after('id')->constrained('alumni')->nullOnDelete();
-            $table->string('location')->default('Balikpapan')->after('job_type');
-            $table->string('salary_range')->nullable()->after('location');
-            $table->text('requirements')->nullable()->after('description');
-            $table->date('deadline')->nullable()->after('requirements');
-            $table->string('status')->default('pending')->after('apply_url')->index(); // 'draft', 'pending', 'active', 'expired', 'closed'
-            $table->softDeletes()->after('updated_at');
-
-            $table->index(['job_type', 'status', 'deadline']);
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('job_vacancies', function (Blueprint $table) {
-            $table->dropForeign(['alumnus_id']);
-            $table->dropIndex(['job_type', 'status', 'deadline']);
-            $table->dropSoftDeletes();
-            $table->dropColumn([
-                'slug',
-                'alumnus_id',
-                'location',
-                'salary_range',
-                'requirements',
-                'deadline',
-                'status',
-            ]);
-        });
-    }
-};
+    $table->index(['job_type', 'status', 'deadline']);
+});
 ```
 
 ---
@@ -366,13 +337,14 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan migrasi kolom lowongan kerja
-- [ ] Atur scope `active()` dan relasi di Model `JobVacancy`
-- [ ] Buat Form Request `StoreJobVacancyRequest`
-- [ ] Buat Controller Publik, Member, dan Admin
-- [ ] Buat view Blade:
+- [x] Jalankan migrasi kolom lowongan kerja
+- [x] Atur scope `active()` dan relasi di Model `JobVacancy`
+- [x] Buat Form Request `StoreJobVacancyRequest` & `UpdateJobVacancyRequest`
+- [x] Buat Controller Publik, Member, dan Admin
+- [x] Buat view Blade:
   - `career/index.blade.php` (Filter tipe kerja, lokasi, search bar, list cards)
   - `career/show.blade.php` (Detail persyaratan, CTA link lamaran, info poster alumni)
-  - `admin/job-vacancies/index.blade.php` & `admin/job-vacancies/create.blade.php`
-- [ ] Tulis test TDD dan jalankan test suite
-- [ ] Format kode dengan Pint: `vendor/bin/pint --dirty --format agent`
+  - `profile/job/index.blade.php` & `profile/job/create.blade.php`
+  - `admin/job-vacancies/index.blade.php`, `create.blade.php`, & `edit.blade.php`
+- [x] Tulis test TDD dan jalankan test suite (18 assertions baru lolos)
+- [x] Format kode dengan Pint: `vendor/bin/pint --dirty --format agent`

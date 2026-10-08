@@ -1,6 +1,6 @@
 # 👥 Task 02: Direktori & Manajemen Alumni (CRUD)
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed) ✅  
 > **Prioritas:** 🔴 Critical / Foundation (Fase 1)  
 > **Modul PRD:** Modul 2: Manajemen Alumni (CRUD)  
 > **Ketergantungan:** Task 01 (Autentikasi & Multi-Role)  
@@ -16,65 +16,44 @@ Fitur ini merupakan pusat data ekosistem IKA KPS Balikpapan yang mencakup:
 
 ---
 
-## 2. Perintah Migration Database
+## 2. Pembaruan Skema Basis Data (Langsung pada Migration Dasar)
 
-Jalankan perintah pembuatan migrasi untuk melengkapi skema tabel `alumni`:
+> [!IMPORTANT]
+> **Aturan**: Jangan membuat file migrasi `enhance_alumni_table_with_slug_and_relations` atau migrasi add lainnya. Perbarui langsung skema dasar pada file `database/migrations/2026_10_06_071754_create_alumni_table.php`.
 
-```bash
-php artisan make:migration enhance_alumni_table_with_slug_and_relations --table=alumni
-```
-
-### Kode Migrasi (`database/migrations/xxxx_xx_xx_enhance_alumni_table_with_slug_and_relations.php`):
+### Definisi Skema Tabel `alumni`:
 
 ```php
-<?php
+Schema::create('alumni', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
+    $table->string('name');
+    $table->string('slug')->unique();
+    $table->string('title')->nullable();
+    $table->string('level')->default('sma'); // tk, sd, smp, sma
+    $table->string('class_year')->nullable(); // misal '04, '11
+    $table->string('full_year')->nullable(); // misal 2004, 2011
+    $table->string('profession')->nullable();
+    $table->string('institution')->nullable();
+    $table->string('domicile')->nullable();
+    $table->text('summary')->nullable();
+    $table->string('email')->nullable();
+    $table->string('phone')->nullable();
+    $table->json('tags')->nullable();
+    $table->string('badge')->nullable();
+    $table->string('location')->nullable();
+    $table->string('linkedin_url')->nullable();
+    $table->string('instagram_handle')->nullable();
+    $table->text('avatar_url')->nullable();
+    $table->boolean('is_verified')->default(false)->index();
+    $table->timestamp('verified_at')->nullable();
+    $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
+    $table->timestamps();
+    $table->softDeletes();
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('alumni', function (Blueprint $table) {
-            $table->string('slug')->nullable()->unique()->after('name');
-            $table->string('email')->nullable()->after('summary');
-            $table->string('phone')->nullable()->after('email');
-            $table->string('linkedin_url')->nullable()->after('location');
-            $table->string('instagram_handle')->nullable()->after('linkedin_url');
-            $table->foreignId('user_id')->nullable()->after('id')->constrained('users')->nullOnDelete();
-            $table->softDeletes()->after('updated_at');
-
-            $table->index(['level', 'full_year', 'is_verified']);
-            $table->index('name');
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('alumni', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropIndex(['level', 'full_year', 'is_verified']);
-            $table->dropIndex(['name']);
-            $table->dropSoftDeletes();
-            $table->dropColumn([
-                'slug',
-                'email',
-                'phone',
-                'linkedin_url',
-                'instagram_handle',
-                'user_id',
-            ]);
-        });
-    }
-};
+    $table->index(['level', 'full_year', 'is_verified']);
+    $table->index('name');
+});
 ```
 
 ---
@@ -387,14 +366,14 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan `php artisan make:migration enhance_alumni_table_with_slug_and_relations`
-- [ ] Terapkan SoftDeletes dan relasi di Model `Alumnus`
-- [ ] Buat Form Request `StoreAlumnusRequest` & `UpdateAlumnusRequest`
-- [ ] Buat Controller `PublicAlumniController` & `AdminAlumniController`
-- [ ] Implementasikan tampilan Blade:
+- [x] Perbarui file migrasi dasar `database/migrations/2026_10_06_071754_create_alumni_table.php` secara langsung (tanpa membuat file migrasi add_to_...)
+- [x] Terapkan SoftDeletes dan relasi di Model `Alumnus`
+- [x] Buat Form Request `StoreAlumnusRequest` & `UpdateAlumnusRequest`
+- [x] Buat Controller `PublicAlumniController` & `AdminAlumniController`
+- [x] Implementasikan tampilan Blade:
   - `alumni/index.blade.php` (Grid, Search bar, Level filter tabs, Pagination)
   - `alumni/show.blade.php` (Header banner, Profil detail, Bisnis terkait, Kontak)
   - `admin/alumni/index.blade.php`, `admin/alumni/create.blade.php`, `admin/alumni/edit.blade.php`
-- [ ] Tulis Factory dan Seeder realistis
-- [ ] Jalankan seluruh skenario pengujian TDD dan pastikan lulus
-- [ ] Format kode dengan Pint: `vendor/bin/pint --dirty --format agent`
+- [x] Tulis Factory dan Seeder realistis
+- [x] Jalankan seluruh skenario pengujian TDD dan pastikan lulus
+- [x] Format kode dengan Pint: `vendor/bin/pint --dirty --format agent`

@@ -1,6 +1,6 @@
 # 🏢 Task 04: Katalog Bisnis Alumni & Sinergi Ekonomi
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed ✅)  
 > **Prioritas:** 🟠 High / Core Content (Fase 2)  
 > **Modul PRD:** Modul 4: Katalog Bisnis Alumni (CRUD)  
 > **Ketergantungan:** Task 01 (Autentikasi), Task 02 (Manajemen Alumni)  
@@ -17,67 +17,36 @@ Katalog Bisnis memfasilitasi pemberdayaan ekonomi dan jaringan usaha antar alumn
 
 ---
 
-## 2. Perintah Migration Database
+## 2. Pembaruan Skema Basis Data (Langsung pada Migration Dasar)
 
-Jalankan perintah migrasi:
+> [!IMPORTANT]
+> **Aturan**: Jangan membuat file migrasi `enhance_businesses_table_with_slug_and_status` atau migrasi add lainnya. Perbarui langsung skema dasar pada file `database/migrations/2026_10_06_071755_create_businesses_table.php`.
 
-```bash
-php artisan make:migration enhance_businesses_table_with_slug_and_status --table=businesses
-```
-
-### Kode Migrasi (`database/migrations/xxxx_xx_xx_enhance_businesses_table_with_slug_and_status.php`):
+### Definisi Skema Tabel `businesses`:
 
 ```php
-<?php
+Schema::create('businesses', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('alumnus_id')->nullable()->constrained('alumni')->cascadeOnDelete();
+    $table->string('name');
+    $table->string('slug')->unique();
+    $table->string('category')->index();
+    $table->string('owner_info')->nullable();
+    $table->text('description');
+    $table->text('image_url')->nullable();
+    $table->string('action_type')->default('whatsapp'); // whatsapp, phone, link
+    $table->string('action_url')->nullable();
+    $table->string('status')->default('pending')->index(); // draft, pending, published, rejected
+    $table->string('address')->nullable();
+    $table->string('city')->default('Balikpapan');
+    $table->string('phone')->nullable();
+    $table->string('whatsapp_number')->nullable();
+    $table->string('website_url')->nullable();
+    $table->timestamps();
+    $table->softDeletes();
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('businesses', function (Blueprint $table) {
-            $table->string('slug')->nullable()->unique()->after('name');
-            $table->foreignId('alumnus_id')->nullable()->after('id')->constrained('alumni')->nullOnDelete();
-            $table->string('status')->default('pending')->after('action_url')->index(); // 'draft', 'pending', 'published', 'rejected'
-            $table->string('address')->nullable()->after('status');
-            $table->string('city')->default('Balikpapan')->after('address');
-            $table->string('phone')->nullable()->after('city');
-            $table->string('whatsapp_number')->nullable()->after('phone');
-            $table->string('website_url')->nullable()->after('whatsapp_number');
-            $table->softDeletes()->after('updated_at');
-
-            $table->index(['category', 'status']);
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('businesses', function (Blueprint $table) {
-            $table->dropForeign(['alumnus_id']);
-            $table->dropIndex(['category', 'status']);
-            $table->dropSoftDeletes();
-            $table->dropColumn([
-                'slug',
-                'alumnus_id',
-                'status',
-                'address',
-                'city',
-                'phone',
-                'whatsapp_number',
-                'website_url',
-            ]);
-        });
-    }
-};
+    $table->index(['category', 'status']);
+});
 ```
 
 ---
@@ -341,14 +310,14 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan migrasi penambahan kolom bisnis
-- [ ] Atur relasi dan scopes di Model `Business`
-- [ ] Buat Form Request `StoreBusinessRequest`
-- [ ] Buat Controller Publik, Member, dan Admin
-- [ ] Implementasikan tampilan Blade:
+- [x] Pastikan skema tabel `businesses` lengkap pada file migrasi dasar
+- [x] Atur relasi dan scopes di Model `Business` (`scopePublished`, `alumnus`)
+- [x] Buat Form Request `StoreBusinessRequest` & `UpdateBusinessRequest`
+- [x] Buat Controller Publik (`PublicBusinessController`), Member (`UserBusinessController`), dan Admin (`AdminBusinessController`)
+- [x] Implementasikan tampilan Blade:
   - `business/index.blade.php` (Filter kategori tabs, search, grid cards)
   - `business/show.blade.php` (Detail bisnis, Tombol Hubungi WhatsApp)
-  - `profile/business/create.blade.php` (Form alumni daftarkan usaha)
-  - `admin/businesses/index.blade.php` & `admin/businesses/edit.blade.php`
-- [ ] Tulis unit & feature test TDD dan jalankan
-- [ ] Jalankan `vendor/bin/pint --dirty --format agent`
+  - `profile/business/index.blade.php` & `profile/business/create.blade.php` (Form alumni daftarkan usaha)
+  - `admin/businesses/index.blade.php`, `create.blade.php`, & `edit.blade.php`
+- [x] Tulis unit & feature test TDD dan jalankan
+- [x] Jalankan `vendor/bin/pint --dirty --format agent`

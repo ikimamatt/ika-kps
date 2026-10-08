@@ -32,14 +32,30 @@
                         <div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
                             <div class="h-full {{ $prog->bar_color_class }} rounded-full" style="width: {{ $prog->progress_percent }}%;"></div>
                         </div>
-                        <span class="font-body-sm text-body-sm font-bold {{ $prog->bar_color_class == 'bg-secondary' ? 'text-secondary' : ($prog->bar_color_class == 'bg-tertiary' ? 'text-tertiary' : 'text-primary') }}">
-                            {{ $prog->achievement_text }}
-                        </span>
+                        <div class="flex items-center justify-between gap-2 pt-1">
+                            <span class="font-body-sm text-body-sm font-bold truncate {{ $prog->bar_color_class == 'bg-secondary' ? 'text-secondary' : ($prog->bar_color_class == 'bg-tertiary' ? 'text-tertiary' : 'text-primary') }}">
+                                {{ $prog->achievement_text }}
+                            </span>
+                            @if($prog->slug)
+                                <a href="{{ route('program.show', $prog->slug) }}" class="text-[11px] font-bold text-secondary hover:underline shrink-0">
+                                    Detail &rarr;
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             @empty
                 <p class="col-span-4 text-center py-8 text-on-surface-variant">Belum ada agenda program kerja terdaftar.</p>
             @endforelse
+        </div>
+
+        <!-- View All Programs Button -->
+        <div class="flex justify-center pt-2">
+            <a href="{{ route('program.index') }}" 
+               class="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm hover:bg-primary-container transition-all shadow-sm flex items-center gap-2">
+                <span>Lihat Seluruh Inisiatif &amp; Program Kerja</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
         </div>
     </div>
 </section>

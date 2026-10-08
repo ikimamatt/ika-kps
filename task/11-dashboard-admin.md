@@ -1,6 +1,6 @@
 # 📊 Task 11: Admin Layout & Dashboard Overview
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed ✅)  
 > **Prioritas:** 🔴 Critical / Foundation (Fase 1)  
 > **Modul PRD:** Modul 11: Dashboard Admin  
 > **Ketergantungan:** Task 01 (Autentikasi & Multi-Role)  
@@ -26,7 +26,7 @@ Dashboard Admin merupakan pusat kendali operasional bagi Pengurus dan Administra
 ```
 📊 Dashboard Overview (/admin)
 👥 Direktori Alumni (/admin/alumni)
-📋 Verifikasi Pendaftaran (/admin/registrations) [Badge: Pending Count]
+📋 Verifikasi Keanggotaan (/admin/verifikasi) [Badge: Pending Count]
 🏢 Bisnis Alumni (/admin/businesses)
 💼 Lowongan Kerja (/admin/job-vacancies)
 📰 Berita & Artikel (/admin/articles)
@@ -54,7 +54,7 @@ use App\Models\Business;
 use App\Models\Contact;
 use App\Models\Event;
 use App\Models\JobVacancy;
-use App\Models\Registration;
+use App\Models\User;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -63,14 +63,15 @@ class DashboardController extends Controller
     {
         $metrics = [
             'total_alumni' => Alumnus::where('is_verified', true)->count(),
-            'pending_registrations' => Registration::where('status', 'pending')->count(),
+            'pending_alumni' => User::where('status', 'pending')->count(),
             'active_businesses' => Business::where('status', 'published')->count(),
             'active_jobs' => JobVacancy::active()->count(),
             'upcoming_events' => Event::where('status', 'published')->where('start_date', '>=', now())->count(),
             'unread_contacts' => Contact::unread()->count(),
         ];
 
-        $latestRegistrations = Registration::where('status', 'pending')
+        $latestPendingAlumni = User::with('alumnus')
+            ->where('status', 'pending')
             ->latest()
             ->take(5)
             ->get();
@@ -82,7 +83,7 @@ class DashboardController extends Controller
             'tk' => Alumnus::where('level', 'tk')->count(),
         ];
 
-        return view('admin.dashboard', compact('metrics', 'latestRegistrations', 'alumniDistribution'));
+        return view('admin.dashboard', compact('metrics', 'latestPendingAlumni', 'alumniDistribution'));
     }
 }
 ```
@@ -105,7 +106,6 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Alumnus;
 use App\Models\Contact;
-use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -127,7 +127,7 @@ class AdminDashboardOverviewTest extends TestCase
         $admin = User::factory()->admin()->create();
 
         Alumnus::factory()->count(15)->create(['is_verified' => true]);
-        Registration::factory()->count(4)->create(['status' => 'pending']);
+        User::factory()->count(4)->create(['status' => 'pending']);
         Contact::factory()->count(3)->create(['is_read' => false]);
 
         $response = $this->actingAs($admin)->get('/admin');
@@ -135,12 +135,12 @@ class AdminDashboardOverviewTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewHas('metrics', function ($metrics) {
             return $metrics['total_alumni'] === 15
-                && $metrics['pending_registrations'] === 4
+                && $metrics['pending_alumni'] === 4
                 && $metrics['unread_contacts'] === 3;
         });
 
         // Verifikasi badge pada tampilan
-        $response->assertSee('4'); // Pending registrations count badge
+        $response->assertSee('4'); // Pending alumni count badge
     }
 }
 ```
@@ -159,10 +159,10 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Buat layout Blade master admin `resources/views/layouts/admin.blade.php`
-- [ ] Buat komponen partial sidebar `resources/views/components/admin/sidebar.blade.php` dengan badge dinamis
-- [ ] Buat komponen topbar `resources/views/components/admin/topbar.blade.php`
-- [ ] Buat view `resources/views/admin/dashboard.blade.php` dengan grid metrik modern Tailwind CSS
-- [ ] Implementasikan `DashboardController`
-- [ ] Tulis test TDD dan verifikasi kelulusan pengujian
-- [ ] Format kode: `vendor/bin/pint --dirty --format agent`
+- [x] Buat layout Blade master admin `resources/views/layouts/admin.blade.php`
+- [x] Buat komponen partial sidebar `resources/views/components/admin/sidebar.blade.php` dengan badge dinamis
+- [x] Buat komponen topbar terintegrasi dengan profil admin dan drawer responsif
+- [x] Buat view `resources/views/admin/dashboard.blade.php` dengan grid metrik modern Tailwind CSS
+- [x] Implementasikan `DashboardController` dengan metrik, pendaftaran terbaru, dan distribusi jenjang
+- [x] Tulis test TDD dan verifikasi kelulusan pengujian
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`

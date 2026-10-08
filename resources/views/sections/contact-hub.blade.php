@@ -8,26 +8,34 @@
                      class="h-12 w-12 rounded-full object-contain shadow-sm ring-2 ring-secondary/30" 
                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtHNgmphBmPGpNCntwuo76IlpJV5KbSyWUtMNB7JxVMm_mKTgzTjFLWy1QQkzBo9-yUl_ZykrdzIgFkxC-olBfF4UyW_t8dRFc3_DD0pyfzDkAqHgqPgEuj3ZByIUmoKcLRpPptmPV3wX3gzUAZqvByrsUVqHVNsstmoHNN_zb8r7AZMcm6UiawQAJQ17sBa5cYfnzSGbRhnpqolxxySE_NdAL5Aoyu4ZgQhO_0KyA2T1tF-NFwnFyqjebaBVbXlAbjtU">
                 <div class="flex flex-col">
-                    <span class="font-headline-sm text-title-md text-primary font-bold uppercase leading-none">IKA KPS BALIKPAPAN</span>
-                    <span class="font-label-sm text-[11px] text-secondary font-semibold uppercase mt-1">Sekolah Nasional KPS Balikpapan</span>
+                    <span class="font-headline-sm text-title-md text-primary font-bold uppercase leading-none">{{ \App\Models\Setting::get('org_name', 'IKA KPS BALIKPAPAN') }}</span>
+                    <span class="font-label-sm text-[11px] text-secondary font-semibold uppercase mt-1">{{ \App\Models\Setting::get('org_tagline', 'Sekolah Nasional KPS Balikpapan') }}</span>
                 </div>
             </div>
             <p class="font-body-md text-body-md text-on-surface-variant">
-                Wadah persaudaraan, sinergi, dan bakti bagi Almamater Sekolah Nasional KPS Balikpapan serta kemajuan Kota Balikpapan dan Nusantara.
+                {{ \App\Models\Setting::get('org_description', 'Wadah persaudaraan, sinergi, dan bakti bagi Almamater Sekolah Nasional KPS Balikpapan serta kemajuan Kota Balikpapan dan Nusantara.') }}
             </p>
+            @php
+                $ig = \App\Models\Setting::get('social_instagram');
+                $li = \App\Models\Setting::get('social_linkedin');
+                $yt = \App\Models\Setting::get('social_youtube');
+            @endphp
             <div class="flex items-center gap-3 pt-2">
-                <a aria-label="Instagram Alumni KPS" class="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-secondary hover:text-on-secondary text-on-surface-variant flex items-center justify-center transition-colors" href="#">
-                    <span class="material-symbols-outlined text-[20px]">photo_camera</span>
-                </a>
-                <a aria-label="LinkedIn Komunitas KPS" class="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-secondary hover:text-on-secondary text-on-surface-variant flex items-center justify-center transition-colors" href="#">
-                    <span class="material-symbols-outlined text-[20px]">hub</span>
-                </a>
-                <a aria-label="Facebook IKA KPS" class="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-secondary hover:text-on-secondary text-on-surface-variant flex items-center justify-center transition-colors" href="#">
-                    <span class="material-symbols-outlined text-[20px]">public</span>
-                </a>
-                <a aria-label="YouTube Channel KPS Balikpapan" class="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-secondary hover:text-on-secondary text-on-surface-variant flex items-center justify-center transition-colors" href="#">
-                    <span class="material-symbols-outlined text-[20px]">smart_display</span>
-                </a>
+                @if ($ig)
+                    <a aria-label="Instagram Alumni KPS" href="{{ $ig }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] hover:text-white text-on-surface-variant flex items-center justify-center transition-all">
+                        <x-icons.instagram class="w-4 h-4 fill-current" />
+                    </a>
+                @endif
+                @if ($li)
+                    <a aria-label="LinkedIn Komunitas KPS" href="{{ $li }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-[#0077B5] hover:text-white text-on-surface-variant flex items-center justify-center transition-all">
+                        <x-icons.linkedin class="w-4 h-4 fill-current" />
+                    </a>
+                @endif
+                @if ($yt)
+                    <a aria-label="YouTube Channel KPS Balikpapan" href="{{ $yt }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-[#FF0000] hover:text-white text-on-surface-variant flex items-center justify-center transition-all">
+                        <x-icons.youtube class="w-4 h-4 fill-current" />
+                    </a>
+                @endif
             </div>
         </div>
 
@@ -36,10 +44,10 @@
             <span class="font-label-lg text-label-lg text-primary font-bold uppercase tracking-wider">Akses Cepat</span>
             <ul class="flex flex-col gap-2 font-body-sm text-body-sm text-on-surface-variant">
                 <li><a class="hover:text-secondary transition-colors" href="#tentang-kami">Profil &amp; AD/ART</a></li>
-                <li><a class="hover:text-secondary transition-colors" href="#direktori-alumni">Direktori Angkatan</a></li>
-                <li><a class="hover:text-secondary transition-colors" href="#program-kerja">Agenda &amp; Baksos</a></li>
-                <li><a class="hover:text-secondary transition-colors" href="#sinergi-bisnis">Katalog Usaha UMKM</a></li>
-                <li><a class="hover:text-secondary transition-colors" href="#daftar-alumni">Formulir Alumni Baru</a></li>
+                <li><a class="hover:text-secondary transition-colors" href="{{ route('alumni.index') }}">Direktori Angkatan</a></li>
+                <li><a class="hover:text-secondary transition-colors" href="{{ route('program.index') }}">Agenda &amp; Baksos</a></li>
+                <li><a class="hover:text-secondary transition-colors" href="{{ route('business.index') }}">Katalog Usaha UMKM</a></li>
+                <li><a class="hover:text-secondary transition-colors" href="{{ route('register') }}">Formulir Alumni Baru</a></li>
             </ul>
         </div>
 
@@ -47,16 +55,24 @@
         <div class="lg:col-span-3 flex flex-col gap-3">
             <span class="font-label-lg text-label-lg text-primary font-bold uppercase tracking-wider">Sekretariat IKA KPS</span>
             <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                Gedung Alumni KPS, Jl. Sport No. 1, Prapatan, Kec. Balikpapan Kota, Kota Balikpapan, Kalimantan Timur 76111
+                {{ \App\Models\Setting::get('contact_address', 'Gedung Alumni KPS, Jl. Sport No. 1, Prapatan, Kec. Balikpapan Kota, Kota Balikpapan, Kalimantan Timur 76111') }}
             </p>
+            @php
+                $contactEmail = \App\Models\Setting::get('contact_email', 'sekretariat@ika-kps.id');
+                $waNum = \App\Models\Setting::get('contact_whatsapp', '08115401985');
+                $waClean = preg_replace('/[^0-9]/', '', $waNum);
+                if (str_starts_with($waClean, '0')) {
+                    $waClean = '62' . substr($waClean, 1);
+                }
+            @endphp
             <div class="flex flex-col gap-1.5 pt-1 font-body-sm text-body-sm text-on-surface-variant">
-                <a href="mailto:sekretariat@ikakpsbalikpapan.or.id" class="flex items-center gap-2 hover:text-secondary">
+                <a href="mailto:{{ $contactEmail }}" class="flex items-center gap-2 hover:text-secondary">
                     <span class="material-symbols-outlined text-[18px] text-secondary">mail</span>
-                    sekretariat@ikakpsbalikpapan.or.id
+                    {{ $contactEmail }}
                 </a>
-                <a href="https://wa.me/" class="flex items-center gap-2 hover:text-secondary" target="_blank" rel="noopener">
-                    <span class="material-symbols-outlined text-[18px] text-secondary">call</span>
-                    +62 811-540-KPS (WhatsApp Center)
+                <a href="https://wa.me/{{ $waClean }}" class="flex items-center gap-2 hover:text-secondary" target="_blank" rel="noopener noreferrer">
+                    <x-icons.whatsapp class="w-4 h-4 fill-current text-emerald-600 shrink-0" />
+                    {{ $waNum }} (WhatsApp Center)
                 </a>
             </div>
         </div>

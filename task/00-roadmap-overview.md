@@ -14,18 +14,18 @@ Setiap file di dalam folder `task/` adalah panduan teknis mandiri yang mencakup:
 
 | Fase | File Task | Modul / Fitur | Estimasi Kompleksitas | Ketergantungan (Prasyarat) |
 | :--- | :--- | :--- | :---: | :--- |
-| **Fase 1: Foundation** | [`01-autentikasi-dan-profil.md`](file:///c:/laragon/www/ika-kps/task/01-autentikasi-dan-profil.md) | Autentikasi, Multi-Role & Profil Pengguna | Tinggi | - |
-| | [`02-manajemen-alumni.md`](file:///c:/laragon/www/ika-kps/task/02-manajemen-alumni.md) | Direktori & Manajemen Alumni (CRUD + Slug) | Sedang | Task 01 |
-| | [`03-verifikasi-pendaftaran.md`](file:///c:/laragon/www/ika-kps/task/03-verifikasi-pendaftaran.md) | Pendaftaran Online & Approval Workflow | Sedang | Task 01, Task 02 |
-| | [`11-dashboard-admin.md`](file:///c:/laragon/www/ika-kps/task/11-dashboard-admin.md) | Admin Shell, Layout Sidebar & Ringkasan Metrik | Sedang | Task 01 |
-| **Fase 2: Core Content** | [`04-katalog-bisnis.md`](file:///c:/laragon/www/ika-kps/task/04-katalog-bisnis.md) | Katalog Bisnis Alumni & Pengajuan Mandiri | Sedang | Task 01, Task 02 |
-| | [`05-bursa-kerja.md`](file:///c:/laragon/www/ika-kps/task/05-bursa-kerja.md) | Bursa Kerja (Loker) & Pengajuan Karir | Sedang | Task 01, Task 02 |
-| | [`06-program-kegiatan.md`](file:///c:/laragon/www/ika-kps/task/06-program-kegiatan.md) | Program Kerja Organisasi & Progress Donasi | Rendah | Task 01 |
-| | [`07-artikel-dan-berita.md`](file:///c:/laragon/www/ika-kps/task/07-artikel-dan-berita.md) | Berita, Artikel Nostalgia & Liputan Acara | Sedang | Task 01 |
-| **Fase 3: Engagement** | [`08-event-dan-agenda.md`](file:///c:/laragon/www/ika-kps/task/08-event-dan-agenda.md) | Agenda Kegiatan, Reuni & RSVP Online | Tinggi | Task 01, Task 02 |
-| | [`09-galeri-foto.md`](file:///c:/laragon/www/ika-kps/task/09-galeri-foto.md) | Dokumentasi Galeri Foto & Album Kenangan | Sedang | Task 01 |
-| | [`10-pesan-dan-kontak.md`](file:///c:/laragon/www/ika-kps/task/10-pesan-dan-kontak.md) | Hub Kontak & Inbox Pesan Masuk | Rendah | - |
-| **Fase 4: Management** | [`12-pengaturan-umum.md`](file:///c:/laragon/www/ika-kps/task/12-pengaturan-umum.md) | Konfigurasi Dinamis Website & Media Sosial | Rendah | Task 01 |
+| **Fase 1: Foundation** | [`01-autentikasi-dan-profil.md`](file:///c:/laragon/www/ika-kps/task/01-autentikasi-dan-profil.md) | Autentikasi & Registrasi Alumni Terpadu ✅ | Selesai | - |
+| | [`02-manajemen-alumni.md`](file:///c:/laragon/www/ika-kps/task/02-manajemen-alumni.md) | Direktori & Manajemen Alumni (CRUD + Slug) ✅ | Selesai | Task 01 |
+| | [`03-verifikasi-pendaftaran.md`](file:///c:/laragon/www/ika-kps/task/03-verifikasi-pendaftaran.md) | Verifikasi & Persetujuan Keanggotaan Alumni ✅ | Selesai | Task 01, Task 02 |
+| | [`11-dashboard-admin.md`](file:///c:/laragon/www/ika-kps/task/11-dashboard-admin.md) | Admin Shell, Layout Sidebar & Ringkasan Metrik ✅ | Selesai | Task 01 |
+| **Fase 2: Core Content** | [`04-katalog-bisnis.md`](file:///c:/laragon/www/ika-kps/task/04-katalog-bisnis.md) | Katalog Bisnis Alumni & Pengajuan Mandiri ✅ | Selesai | Task 01, Task 02 |
+| | [`05-bursa-kerja.md`](file:///c:/laragon/www/ika-kps/task/05-bursa-kerja.md) | Bursa Kerja (Loker) & Pengajuan Karir ✅ | Selesai | Task 01, Task 02 |
+| | [`06-program-kegiatan.md`](file:///c:/laragon/www/ika-kps/task/06-program-kegiatan.md) | Program Kerja Organisasi & Progress Donasi ✅ | Selesai | Task 01 |
+| | [`07-artikel-dan-berita.md`](file:///c:/laragon/www/ika-kps/task/07-artikel-dan-berita.md) | Berita, Artikel Nostalgia & Liputan Acara ✅ | Selesai | Task 01 |
+| **Fase 3: Engagement** | [`08-event-dan-agenda.md`](file:///c:/laragon/www/ika-kps/task/08-event-dan-agenda.md) | Agenda Kegiatan, Reuni & RSVP Online ✅ | Selesai | Task 01, Task 02 |
+| | [`09-galeri-foto.md`](file:///c:/laragon/www/ika-kps/task/09-galeri-foto.md) | Dokumentasi Galeri Foto & Album Kenangan ✅ | Selesai | Task 01 |
+| | [`10-pesan-dan-kontak.md`](file:///c:/laragon/www/ika-kps/task/10-pesan-dan-kontak.md) | Hub Kontak & Inbox Pesan Masuk ✅ | Selesai | - |
+| **Fase 4: Management** | [`12-pengaturan-umum.md`](file:///c:/laragon/www/ika-kps/task/12-pengaturan-umum.md) | Konfigurasi Dinamis Website & Media Sosial ✅ | Selesai | Task 01 |
 
 ---
 
@@ -55,8 +55,8 @@ flowchart LR
    php artisan test --filter=NamaFiturTest --compact
    ```
 4. **Implementasikan Kode Fitur (Green)**:
-   - Buat file migrasi, definisikan skema, jalankan migrasi.
-   - Buat Model, relasi, cast, dan model factory.
+   - Sesuaikan file migrasi dasar tabel terkait (jangan buat migrasi baru `add_to_...`), jalankan `php artisan migrate:fresh --seed`.
+   - Perbarui Model, relasi, cast, dan model factory.
    - Buat Form Request class untuk validasi bersih.
    - Buat Controller & Route.
    - Buat Blade view template.
@@ -70,17 +70,24 @@ flowchart LR
 
 ---
 
-## 3. Aturan Migration & Seeder
+## 3. Aturan Baku Migration & Seeder (PENTING)
 
-1. **Migration Naming & Schema**:
-   - Gunakan nama migration yang deskriptif dan buat via `php artisan make:migration`.
-   - Selalu sertakan foreign key constraint dengan `cascadeOnDelete()` atau `nullOnDelete()`.
-   - Tambahkan index pada kolom yang sering dicari (`slug`, `status`, `level`, `class_year`).
-   - Terapkan `softDeletes()` untuk data entitas inti (alumni, bisnis, lowongan, artikel, event).
+> [!WARNING]
+> **DILARANG MENGGUNAKAN MIGRASI `add_to_nama_tabel`**:
+> Jangan membuat file migrasi tambahan baru seperti `add_xxx_to_table_name` karena akan menumpuk file migrasi.
+> Setiap kali ada penambahan atau modifikasi kolom:
+> 1. **Edit langsung file migrasi dasar pembuatan tabel (`create_..._table`)**.
+> 2. Jalankan `php artisan migrate:fresh --seed` (atau `php artisan migrate:fresh`).
+> 3. Semua tabel inti menerapkan index dan softDeletes secara langsung di file create table masing-masing.
+
+1. **Prinsip Data Keanggotaan**:
+   - Organisasi **tidak memiliki basis data arsip lama**, sehingga data alumni bersumber 100% dari pendaftaran mandiri alumni baru.
+   - Pendaftaran akun login (`users`) dan profil alumni (`alumni`) disatukan dalam satu formulir (Single Entry).
+   - Tabel `registrations` dihilangkan sepenuhnya dari arsitektur.
 2. **Seeder & Factory**:
-   - Selalu buat Factory untuk setiap Model agar pengujian di TDD mudah dan bersih (`Model::factory()->create()`).
+   - Buat Factory untuk setiap Model agar pengujian di TDD mudah dan bersih (`Model::factory()->create()`).
    - Gunakan data realistis bertema Kota Balikpapan dan alumni Sekolah Nasional KPS (jenjang TK, SD, SMP, SMA KPS Balikpapan).
-   - Pastikan pemanggilan seeder didaftarkan di `database/seeders/DatabaseSeeder.php`.
+   - Seluruh seeder didaftarkan dan dijalankan di `database/seeders/DatabaseSeeder.php`.
 
 ---
 

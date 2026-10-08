@@ -1,6 +1,6 @@
 # 🖼️ Task 09: Dokumentasi Galeri Foto & Album Kenangan
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed)  
 > **Prioritas:** 🟡 Medium / Engagement (Fase 3)  
 > **Modul PRD:** Modul 9: Galeri Foto (BARU)  
 > **Ketergantungan:** Task 01 (Autentikasi & Multi-Role)  
@@ -310,13 +310,13 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan migrasi tabel `galleries` dan `gallery_photos`
-- [ ] Atur Model `Gallery` & `GalleryPhoto`
-- [ ] Buat Form Request `StoreGalleryRequest`
-- [ ] Buat Controller Publik & Admin dengan penanganan upload multi-file gambar
-- [ ] Buat tampilan Blade:
-  - `gallery/index.blade.php` (Grid album kartu)
-  - `gallery/show.blade.php` (Grid foto dengan modal lightbox viewer sederhana)
-  - `admin/galleries/index.blade.php`, `admin/galleries/create.blade.php`, form upload foto
-- [ ] Tulis pengujian TDD dan jalankan
-- [ ] Format kode: `vendor/bin/pint --dirty --format agent`
+- [x] Jalankan migrasi tabel `galleries` dan `gallery_photos`
+- [x] Atur Model `Gallery` & `GalleryPhoto`
+- [x] Buat Form Request `StoreGalleryRequest`, `UpdateGalleryRequest`, & `UploadGalleryPhotosRequest`
+- [x] Buat Controller Publik & Admin dengan penanganan upload multi-file gambar
+- [x] Buat tampilan Blade:
+  - `gallery/index.blade.php` (Grid album kartu, filter kategori, search, counter)
+  - `gallery/show.blade.php` (Grid foto responsif dengan modal lightbox viewer interaktif)
+  - `admin/galleries/index.blade.php`, `admin/galleries/create.blade.php`, `admin/galleries/edit.blade.php` (Manajemen foto, delete per foto, batch upload)
+- [x] Tulis pengujian TDD dan jalankan (15 tests passing)
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`

@@ -1,6 +1,6 @@
 # 📬 Task 10: Kontak Hub & Kotak Masuk Pesan (Inbox)
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed)  
 > **Prioritas:** 🟡 Medium / Engagement (Fase 3)  
 > **Modul PRD:** Modul 10: Pesan & Kontak Masuk (BARU)  
 > **Ketergantungan:** Tidak ada (Dapat dikerjakan paralel)  
@@ -277,13 +277,13 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan migrasi tabel `contacts`
-- [ ] Atur Model `Contact` dengan helper `markAsRead()`
-- [ ] Buat Form Request `StoreContactRequest` (dengan validasi honeypot)
-- [ ] Buat Controller Publik & Admin
-- [ ] Buat tampilan Blade:
-  - `contact/show.blade.php` (Form kontak, peta lokasi sekretariat, info kontak darurat)
-  - `admin/contacts/index.blade.php` (Tabel inbox, tanda baca tebal untuk pesan unread)
-  - `admin/contacts/show.blade.php` (Tampilan isi surat lengkap)
-- [ ] Tulis test TDD dan jalankan
-- [ ] Format kode: `vendor/bin/pint --dirty --format agent`
+- [x] Jalankan migrasi tabel `contacts`
+- [x] Atur Model `Contact` dengan helper `markAsRead()`
+- [x] Buat Form Request `StoreContactRequest` (dengan validasi honeypot)
+- [x] Buat Controller Publik & Admin
+- [x] Buat tampilan Blade:
+  - `contact/show.blade.php` (Form kontak, info sekretariat, direct WhatsApp support, FAQ)
+  - `admin/contacts/index.blade.php` (Tabel inbox, counter unread, mark read toggle)
+  - `admin/contacts/show.blade.php` (Tampilan isi surat lengkap, direct reply email & WhatsApp)
+- [x] Tulis test TDD dan jalankan (11 tests passing)
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`

@@ -1,6 +1,6 @@
 # 📅 Task 08: Agenda Kegiatan, Kalender Event & RSVP Online
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed)  
 > **Prioritas:** 🟡 Medium / Engagement (Fase 3)  
 > **Modul PRD:** Modul 8: Event & Agenda (BARU)  
 > **Ketergantungan:** Task 01 (Autentikasi & Multi-Role), Task 02 (Manajemen Alumni)  
@@ -422,15 +422,14 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ---
 
-## 6. Checklist Implementasi
-
-- [ ] Jalankan migrasi pembuatan tabel `events` dan `event_registrations`
-- [ ] Atur Model `Event` dan `EventRegistration` beserta relasinya
-- [ ] Buat Form Request `StoreEventRequest`
-- [ ] Buat Controller Event Publik, RSVP Controller, dan Admin Controller
-- [ ] Buat tampilan Blade:
+- [x] Jalankan migrasi pembuatan tabel `events` dan `event_registrations`
+- [x] Atur Model `Event` dan `EventRegistration` beserta relasinya
+- [x] Buat Form Request `StoreEventRequest` & `UpdateEventRequest`
+- [x] Buat Controller Event Publik, RSVP Controller, dan Admin Controller
+- [x] Buat tampilan Blade:
   - `event/index.blade.php` (Kalender grid/list view, filter kategori, badge tanggal)
   - `event/show.blade.php` (Detail kegiatan, kuota tersisa, tombol RSVP interaktif)
   - `admin/events/index.blade.php` & `admin/events/participants.blade.php`
-- [ ] Tulis skenario pengujian TDD dan pastikan semua lulus
-- [ ] Format kode: `vendor/bin/pint --dirty --format agent`
+  - `admin/events/create.blade.php` & `admin/events/edit.blade.php`
+- [x] Tulis skenario pengujian TDD dan pastikan semua lulus
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`

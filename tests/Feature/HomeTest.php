@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Alumnus;
-use App\Models\Registration;
+use App\Models\Business;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -24,8 +24,6 @@ class HomeTest extends TestCase
             'full_year' => '2005',
             'profession' => 'Software Engineer',
             'summary' => 'Alumni berkarier di bidang teknologi.',
-            'tags' => ['Teknologi', 'Balikpapan'],
-            'badge' => 'Mentor',
             'location' => 'Balikpapan',
             'is_verified' => true,
         ]);
@@ -91,10 +89,77 @@ class HomeTest extends TestCase
         $response->assertStatus(302);
         $response->assertSessionHas('success');
 
-        $this->assertDatabaseHas('registrations', [
-            'full_name' => 'Fajar Pratama',
+        $this->assertDatabaseHas('users', [
+            'name' => 'Fajar Pratama',
             'email' => 'fajar@example.com',
-            'graduation_year' => '2015',
+            'role' => 'alumni',
+            'status' => 'pending',
         ]);
+
+        $this->assertDatabaseHas('alumni', [
+            'name' => 'Fajar Pratama',
+            'email' => 'fajar@example.com',
+            'full_year' => '2015',
+            'is_verified' => false,
+        ]);
+    }
+
+    public function test_unverified_alumni_not_visible_on_home_page(): void
+    {
+        Alumnus::create([
+            'name' => 'Alumni Belum Diverifikasi',
+            'level' => 'sma',
+            'full_year' => '2019',
+            'is_verified' => false,
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertDontSee('Alumni Belum Diverifikasi');
+    }
+
+    public function test_unpublished_business_not_visible_on_home_page(): void
+    {
+        Business::factory()->create([
+            'name' => 'Bisnis Sudah Terbit',
+            'status' => 'published',
+        ]);
+
+        Business::factory()->pending()->create([
+            'name' => 'Bisnis Masih Pending',
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $response->assertSee('Bisnis Sudah Terbit');
+        $response->assertDontSee('Bisnis Masih Pending');
+    }
+
+    public function test_home_page_alumni_directory_is_paginated_to_six_items(): void
+    {
+        for ($i = 1; $i <= 8; $i++) {
+            Alumnus::create([
+                'name' => "Alumni Terdaftar {$i}",
+                'level' => 'sma',
+                'class_year' => "'10",
+                'full_year' => '2010',
+                'profession' => "Profesi {$i}",
+                'is_verified' => true,
+            ]);
+        }
+
+        $responsePage1 = $this->get('/');
+        $responsePage1->assertStatus(200);
+        $responsePage1->assertSee('Alumni Terdaftar 8'); // latest id first
+        $responsePage1->assertSee('Alumni Terdaftar 3');
+        $responsePage1->assertDontSee('Alumni Terdaftar 2');
+        $responsePage1->assertDontSee('Alumni Terdaftar 1');
+
+        $responsePage2 = $this->get('/?page=2');
+        $responsePage2->assertStatus(200);
+        $responsePage2->assertSee('Alumni Terdaftar 2');
+        $responsePage2->assertSee('Alumni Terdaftar 1');
     }
 }

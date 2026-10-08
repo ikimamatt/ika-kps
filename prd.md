@@ -42,40 +42,34 @@ graph TD
     A --> J[Contact Hub / Footer]
 ```
 
-### 2.2 Model Data Existing
+### 2.2 Model Data & Arsitektur Keanggotaan
 
-| Model | Tabel | Jumlah Field | Status |
-|-------|-------|-------------|--------|
-| [User](file:///c:/laragon/www/ika-kps/app/Models/User.php) | `users` | 3 fillable (name, email, password) | Bawaan Laravel, belum digunakan aktif |
-| [Alumnus](file:///c:/laragon/www/ika-kps/app/Models/Alumnus.php) | `alumni` | 11 fillable | Read-only tampil di landing page |
-| [Business](file:///c:/laragon/www/ika-kps/app/Models/Business.php) | `businesses` | 8 fillable | Read-only tampil di landing page |
-| [JobVacancy](file:///c:/laragon/www/ika-kps/app/Models/JobVacancy.php) | `job_vacancies` | 9 fillable | Read-only tampil di landing page |
-| [Program](file:///c:/laragon/www/ika-kps/app/Models/Program.php) | `programs` | 9 fillable | Read-only tampil di landing page |
-| [Article](file:///c:/laragon/www/ika-kps/app/Models/Article.php) | `articles` | 7 fillable | Read-only tampil di landing page |
-| [Registration](file:///c:/laragon/www/ika-kps/app/Models/Registration.php) | `registrations` | 10 fillable | Hanya store (form submit), tidak ada panel verifikasi |
+> [!IMPORTANT]
+> **Kondisi Basis Data**: Organisasi **tidak memiliki arsip data lama alumni** (tidak ada base data alumni historis). Semua data alumni di portal bersumber **100% dari pendaftaran mandiri (*self-service registration*)** oleh alumni.
+> 
+> **Prinsip Registrasi Tunggal**: Pendaftaran akun login (`users`) dan pengisian data alumni (`alumni`) **disatukan dalam satu formulir pendaftaran tunggal**. Tabel terpisah `registrations` dihilangkan untuk mencegah redundansi data.
 
-### 2.3 Routes Existing
+| Model | Tabel | Status & Keterangan |
+|-------|-------|---------------------|
+| [User](file:///c:/laragon/www/ika-kps/app/Models/User.php) | `users` | Akun autentikasi, memuat peran (`admin`, `pengurus`, `alumni`) dan status akun (`pending`, `active`, `rejected`). |
+| [Alumnus](file:///c:/laragon/www/ika-kps/app/Models/Alumnus.php) | `alumni` | Profil direktori publik alumni (jenjang, angkatan, profesi, kontak), terhubung 1-to-1 dengan `users` via `user_id`. Status verifikasi: `is_verified`. |
+| [Business](file:///c:/laragon/www/ika-kps/app/Models/Business.php) | `businesses` | Katalog UMKM/usaha milik alumni (relasi ke `alumni`). |
+| [JobVacancy](file:///c:/laragon/www/ika-kps/app/Models/JobVacancy.php) | `job_vacancies` | Peluang bursa kerja yang dibagikan alumni. |
+| [Program](file:///c:/laragon/www/ika-kps/app/Models/Program.php) | `programs` | Program kerja & inisiatif sosial organisasi. |
+| [Article](file:///c:/laragon/www/ika-kps/app/Models/Article.php) | `articles` | Berita, catatan nostalgia, dan publikasi kegiatan. |
 
-| Method | URI | Controller | Keterangan |
-|--------|-----|-----------|-----------|
-| `GET` | `/` | `HomeController@index` | Landing page utama |
-| `POST` | `/daftar-alumni` | `RegistrationController@store` | Simpan pendaftaran alumni |
-
-### 2.4 Kelemahan & Gap yang Teridentifikasi
+### 2.3 Aturan Migrasi Basis Data
 
 > [!WARNING]
-> **Kelemahan Kritis yang Harus Ditangani**
+> **Aturan Pembuatan & Pembaruan Migrasi**:
+> Dilarang membuat file migrasi tambahan baru seperti `add_xxx_to_table_name`. Setiap penambahan atau perubahan kolom basis data harus **langsung diubah pada file migrasi pembuatan tabel dasar (`create_..._table`)** untuk menjaga kebersihan arsitektur migrasi.
 
-1. **Tidak ada sistem autentikasi** — User model ada tapi belum digunakan, tidak ada login/register
-2. **Tidak ada panel admin/dashboard** — Semua data hanya bisa dikelola via seeder/tinker
-3. **Tidak ada CRUD operasional** — Data alumni, bisnis, lowongan, program, dan artikel tidak bisa dikelola via UI
-4. **Registration tanpa follow-up** — Form pendaftaran tersimpan, tapi tidak ada mekanisme verifikasi/approval
-5. **Tidak ada relasi antar model** — Alumni tidak terhubung ke User, Business tidak terhubung ke Alumni
-6. **Artikel tanpa konten lengkap** — Hanya summary, tidak ada body content / detail page
-7. **Tidak ada pagination** — Semua data di-load sekaligus (`::all()`)
-8. **Tidak ada upload file/gambar** — Semua gambar menggunakan URL eksternal
-9. **Tidak ada halaman terpisah** — Semua konten tumpuk di satu landing page
-10. **Tidak ada event/kegiatan management** — Program kerja hanya informatif, tanpa jadwal event
+### 2.4 Gap & Kebutuhan Utama yang Ditangani
+
+1. **Alur Pendaftaran Terpadu**: Satu formulir untuk akun sekaligus data alumni — tidak ada input berulang.
+2. **Workflow Persetujuan (Approval Gating)**: Alumni yang baru mendaftar berstatus `pending` dan menunggu approval pengurus sebelum profilnya tampil publik di `/alumni` dan sebelum bisa posting loker/bisnis.
+3. **Panel Admin Terpusat**: Pengurus memiliki dashboard untuk menyetujui/menolak pendaftar baru, serta CRUD konten.
+4. **Relasi Data Jelas**: User terhubung 1-to-1 dengan Alumnus, Alumnus memiliki Business & Job Vacancy.
 
 ---
 
@@ -140,135 +134,76 @@ graph TD
 
 ---
 
-#### 📋 MODUL 1: Autentikasi & Profil Pengguna
+#### 📋 MODUL 1: Autentikasi & Registrasi Alumni Terpadu
 
-**Tujuan:** Menyediakan sistem login dan manajemen akun yang aman bagi alumni dan admin.
+**Tujuan:** Menyediakan sistem pendaftaran tunggal, login aman, dan pengelolaan profil mandiri bagi alumni dan pengurus.
 
-##### Fitur 1.1: Registrasi Akun Alumni
+##### Fitur 1.1: Formulir Pendaftaran Alumni Terpadu (Single Entry)
 | Item | Detail |
 |------|--------|
-| **Deskripsi** | Alumni dapat mendaftar akun melalui form registrasi |
-| **Fields** | Nama lengkap, email, password, konfirmasi password, jenjang (TK/SD/SMP/SMA), tahun lulus |
-| **Validasi** | Email unik, password min 8 karakter, tahun lulus valid |
-| **Alur** | Register → Email verifikasi → Login → Lengkapi Profil |
+| **Deskripsi** | Alumni mendaftar satu kali melalui formulir terpadu (di landing page maupun `/register`) yang langsung menghasilkan Akun Login (`users`) dan Profil Alumni (`alumni`) |
+| **Data Akun** | Nama lengkap, email, password, konfirmasi password, nomor WhatsApp |
+| **Data Almamater** | Jenjang pendidikan (TK, SD, SMP, SMA KPS), tahun kelulusan/angkatan, profesi/instansi, domisili |
+| **Status Awal** | `users.status = 'pending'`, `alumni.is_verified = false` |
+| **Alur** | Register → Langsung login → Tampil status "Menunggu Verifikasi Pengurus" → Admin Approve → Akses Penuh |
 
 ##### Fitur 1.2: Login & Logout
 | Item | Detail |
 |------|--------|
-| **Deskripsi** | Login standar dengan email & password |
-| **Fitur Tambahan** | Remember me, forgot password, reset password via email |
+| **Deskripsi** | Login standar dengan email & kata sandi |
+| **Hak Akses Status** | Jika `pending`: bisa login tapi fitur submit bisnis/loker dibatasi. Jika `active`: akses penuh. Jika `rejected`: notifikasi alasan penolakan. |
 | **Guard** | `web` (default Laravel) |
 
-##### Fitur 1.3: Profil Alumni (Self-Service)
+##### Fitur 1.3: Profil Mandiri (Self-Service Profile)
 | Item | Detail |
 |------|--------|
-| **Deskripsi** | Alumni yang sudah login dapat mengelola profil pribadinya |
-| **CRUD** | Read (lihat profil), Update (edit profil) |
-| **Fields Profil** | Nama, gelar, foto avatar, jenjang, angkatan, profesi, instansi, domisili, bio, tags, media sosial (LinkedIn, Instagram, WhatsApp) |
+| **Deskripsi** | Alumni dapat melihat profil lengkapnya, riwayat angkatan, dan memperbarui foto/kontak |
 | **Halaman** | `/profil`, `/profil/edit` |
 
-##### Fitur 1.4: Role & Permission
+##### Fitur 1.4: Role & Hak Akses
 | Item | Detail |
 |------|--------|
-| **Roles** | `admin`, `pengurus`, `alumni` (anggota biasa) |
-| **Pendekatan** | Gunakan kolom `role` di tabel `users` (simple enum) atau package `spatie/laravel-permission` untuk skalabilitas |
-| **Hak Akses** | Admin = full CRUD semua modul; Pengurus = verifikasi pendaftaran + kelola konten; Alumni = edit profil sendiri + submit bisnis/loker |
-
-**Rekomendasi Migrasi Tabel `users`:**
-```
-users:
-  - id
-  - name
-  - email
-  - password
-  - role (enum: admin, pengurus, alumni) DEFAULT 'alumni'
-  - alumnus_id (FK → alumni, nullable) — relasi 1:1 ke data alumni
-  - avatar_url (nullable)
-  - phone (nullable)
-  - email_verified_at
-  - remember_token
-  - timestamps
-```
+| **Roles** | `admin`, `pengurus`, `alumni` |
+| **Hak Akses** | `admin` & `pengurus`: akses panel admin + approval. `alumni` (terverifikasi): akses katalog, pasang loker, daftar bisnis, RSVP event. |
 
 ---
 
-#### 📋 MODUL 2: Manajemen Alumni (CRUD)
+#### 📋 MODUL 2: Direktori & Manajemen Alumni (CRUD)
 
-**Tujuan:** Mengelola database alumni secara menyeluruh melalui panel admin.
+**Tujuan:** Mengelola database alumni secara menyeluruh dan menyediakan direktori publik.
 
-##### Fitur 2.1: Admin — Daftar Alumni
+##### Fitur 2.1: Admin — Daftar Alumni & Filter
 | Item | Detail |
 |------|--------|
 | **Halaman** | `/admin/alumni` |
-| **Fitur** | Tabel data alumni dengan search, filter (jenjang, angkatan, status verifikasi), sort, pagination |
-| **Aksi** | Lihat detail, Edit, Hapus, Toggle verifikasi, Export (CSV/Excel) |
+| **Fitur** | Tabel data alumni dengan search, filter jenjang, angkatan, status aktif/terverifikasi, pagination |
+| **Aksi** | Detail profil, Sunting, Soft Delete, Restore |
 
-##### Fitur 2.2: Admin — Tambah/Edit Alumni
-| Item | Detail |
-|------|--------|
-| **Halaman** | `/admin/alumni/create`, `/admin/alumni/{id}/edit` |
-| **Fields** | Nama, gelar, jenjang, tahun angkatan, profesi, ringkasan, tags (multi-select), badge, lokasi, avatar (upload file), status verifikasi |
-| **Validasi** | Nama wajib, jenjang in [tk,sd,smp,sma], tahun angkatan wajib |
-
-##### Fitur 2.3: Admin — Hapus Alumni
-| Item | Detail |
-|------|--------|
-| **Tipe** | Soft delete (tambah `SoftDeletes` trait) |
-| **Konfirmasi** | Modal konfirmasi sebelum hapus |
-
-##### Fitur 2.4: Publik — Direktori Alumni (Full Page)
+##### Fitur 2.2: Publik — Direktori Alumni
 | Item | Detail |
 |------|--------|
 | **Halaman** | `/alumni` |
-| **Fitur** | Pencarian nama/profesi/lokasi, filter jenjang + rentang angkatan, pagination (12 per halaman), card grid layout |
+| **Syarat Tampil** | Hanya alumni yang **sudah disetujui (is_verified = true)** yang tampil di direktori publik |
 | **Detail** | `/alumni/{slug}` — halaman profil publik alumni individual |
-
-**Rekomendasi Perbaikan Migrasi `alumni`:**
-```
-alumni (tambahkan):
-  - slug (string, unique) — untuk URL friendly
-  - phone (nullable) — nomor kontak
-  - email (nullable) — email alumni
-  - linkedin_url (nullable)
-  - instagram_handle (nullable)
-  - user_id (FK → users, nullable) — relasi ke akun login
-  - deleted_at (softDeletes)
-```
 
 ---
 
-#### 📋 MODUL 3: Verifikasi Pendaftaran Alumni (CRUD)
+#### 📋 MODUL 3: Verifikasi & Persetujuan Keanggotaan Alumni (Approval Workflow)
 
-**Tujuan:** Mengelola dan memverifikasi pendaftaran alumni baru yang masuk melalui form public.
+**Tujuan:** Meninjau pendaftaran anggota baru yang masuk secara mandiri sebelum disetujui bergabung ke direktori publik.
 
-##### Fitur 3.1: Admin — Daftar Pendaftaran Masuk
+##### Fitur 3.1: Admin — Antrean Pendaftar Menunggu Verifikasi
 | Item | Detail |
 |------|--------|
-| **Halaman** | `/admin/registrations` |
-| **Fitur** | Tabel pendaftaran dengan filter status (pending/verified/rejected), search, sort by tanggal, pagination |
-| **Badge** | Notifikasi badge untuk jumlah pending baru |
+| **Halaman** | `/admin/verifikasi` (atau tab pending di `/admin/alumni`) |
+| **Badge Sidebar** | Indikator jumlah alumni yang berstatus `pending` |
+| **Filter** | Pendaftar Pending, Disetujui (Aktif), Ditolak |
 
-##### Fitur 3.2: Admin — Detail & Aksi Verifikasi
+##### Fitur 3.2: Admin — Aksi Persetujuan (Approve) & Penolakan (Reject)
 | Item | Detail |
 |------|--------|
-| **Halaman** | `/admin/registrations/{id}` |
-| **Aksi** | Approve (status → verified, otomatis buat record Alumnus), Reject (status → rejected, kirim alasan), Pending (kembali ke pending) |
-| **Automasi** | Saat approve: otomatis create Alumnus baru dari data Registration |
-
-##### Fitur 3.3: Admin — Hapus Pendaftaran
-| Item | Detail |
-|------|--------|
-| **Tipe** | Hard delete / soft delete |
-| **Untuk** | Data spam atau duplikat |
-
-**Rekomendasi Perbaikan Migrasi `registrations`:**
-```
-registrations (tambahkan):
-  - rejection_reason (text, nullable)
-  - verified_at (timestamp, nullable)
-  - verified_by (FK → users, nullable)
-  - alumnus_id (FK → alumni, nullable) — relasi ke alumni yang dibuat post-approval
-```
+| **Aksi Approve** | Mengubah `users.status = 'active'`, `alumni.is_verified = true`, mencatat `verified_at` dan `verified_by`. Profil alumni otomatis langsung tampil di direktori publik `/alumni` dan seluruh fitur portal terbuka. |
+| **Aksi Reject** | Mengubah `users.status = 'rejected'`, mencatat alasan penolakan (`rejection_reason`). Pengguna dapat melihat alasan tersebut saat masuk ke akun. |
 
 ---
 
@@ -629,8 +564,8 @@ settings:
 | No | Modul | Create | Read | Update | Delete | Catatan |
 |----|-------|--------|------|--------|--------|---------|
 | 1 | **Users** | ✅ Register | ✅ Profil | ✅ Edit Profil | ✅ Admin only | + Role management |
-| 2 | **Alumni** | ✅ Admin + auto dari Registration | ✅ Publik + Admin | ✅ Admin + Self | ✅ Soft Delete | Inti database |
-| 3 | **Registrations** | ✅ Form Publik | ✅ Admin | ✅ Admin (status) | ✅ Admin | Workflow approval |
+| 2 | **Alumni** | ✅ Form Terpadu + Admin | ✅ Publik (is_verified) + Admin | ✅ Admin + Self | ✅ Soft Delete | Profil direktori publik alumni |
+| 3 | **Verifikasi Akun** | ✅ Otomatis saat Register | ✅ Admin | ✅ Admin (Approve/Reject) | ✅ Admin | Persetujuan keanggotaan & profil |
 | 4 | **Businesses** | ✅ Admin + Alumni | ✅ Publik + Admin | ✅ Admin + Owner | ✅ Soft Delete | Approval workflow |
 | 5 | **Job Vacancies** | ✅ Admin + Alumni | ✅ Publik + Admin | ✅ Admin + Poster | ✅ Soft Delete | Expire otomatis |
 | 6 | **Programs** | ✅ Admin | ✅ Publik + Admin | ✅ Admin | ✅ Soft Delete | Progress tracking |
@@ -695,8 +630,8 @@ settings:
 | 30 | Daftar Alumni | `GET /admin/alumni` | Tabel alumni + CRUD |
 | 31 | Tambah Alumni | `GET /admin/alumni/create` | Form tambah alumni |
 | 32 | Edit Alumni | `GET /admin/alumni/{id}/edit` | Form edit alumni |
-| 33 | Daftar Pendaftaran | `GET /admin/registrations` | Tabel pendaftaran + verifikasi |
-| 34 | Detail Pendaftaran | `GET /admin/registrations/{id}` | Detail + aksi approve/reject |
+| 33 | Verifikasi Keanggotaan | `GET /admin/verifikasi` | Tabel alumni pending + verifikasi |
+| 34 | Detail Verifikasi | `GET /admin/verifikasi/{id}` | Detail pemohon + aksi approve/reject |
 | 35 | Daftar Bisnis | `GET /admin/businesses` | Tabel bisnis + CRUD |
 | 36 | Tambah/Edit Bisnis | `GET /admin/businesses/create` & `{id}/edit` | Form CRUD bisnis |
 | 37 | Daftar Lowongan | `GET /admin/job-vacancies` | Tabel lowongan + CRUD |
@@ -720,17 +655,14 @@ settings:
 
 ```mermaid
 erDiagram
-    USERS ||--o| ALUMNI : "has profile"
+    USERS ||--|| ALUMNI : "has alumni profile (1:1)"
     USERS ||--o{ ARTICLES : "authors"
     USERS ||--o{ EVENTS : "creates"
+    USERS ||--o{ EVENT_REGISTRATIONS : "rsvps"
     ALUMNI ||--o{ BUSINESSES : "owns"
     ALUMNI ||--o{ JOB_VACANCIES : "posts"
-    ALUMNI }o--o{ EVENTS : "RSVP via event_registrations"
-    REGISTRATIONS |o--o| ALUMNI : "becomes"
-    REGISTRATIONS }o--o| USERS : "verified by"
-    GALLERIES ||--|{ GALLERY_PHOTOS : "contains"
     EVENTS ||--o{ EVENT_REGISTRATIONS : "has"
-    USERS ||--o{ EVENT_REGISTRATIONS : "registers"
+    GALLERIES ||--|{ GALLERY_PHOTOS : "contains"
 ```
 
 ---

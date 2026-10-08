@@ -1,235 +1,103 @@
-# 📋 Task 03: Pendaftaran Online & Workflow Verifikasi Alumni
+# 📋 Task 03: Verifikasi & Persetujuan Keanggotaan Alumni Baru
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed ✅)  
 > **Prioritas:** 🔴 Critical / Foundation (Fase 1)  
-> **Modul PRD:** Modul 3: Verifikasi Pendaftaran Alumni (CRUD)  
-> **Ketergantungan:** Task 01 (Autentikasi & Multi-Role), Task 02 (Manajemen Alumni)  
+> **Modul PRD:** Modul 3: Verifikasi & Persetujuan Keanggotaan Alumni (Approval Workflow)  
+> **Ketergantungan:** Task 01 (Autentikasi & Registrasi Terpadu), Task 02 (Manajemen Alumni)  
 
 ---
 
 ## 1. Deskripsi Fitur
 
-Fitur ini menjembatani calon anggota atau alumni yang belum terdata di portal untuk mengajukan pendaftaran secara mandiri:
-1. **Formulir Pendaftaran Publik**: Pengajuan data alumni baru secara online via landing page dan halaman khusus `/daftar-alumni`.
-2. **Dashboard Verifikasi Pengurus (`/admin/registrations`)**: Daftar permohonan masuk dengan filter status (`pending`, `verified`, `rejected`), pencarian, dan penanda jumlah pending baru.
-3. **Workflow Persetujuan Otomatis (*Approval Automation*)**:
-   - **Setujui (Approve)**: Mengubah status menjadi `verified`, mencatat admin pemverifikasi dan waktu verifikasi, serta **secara otomatis meng-generate record baru pada tabel `alumni`** sehingga langsung tampil di direktori alumni.
-   - **Tolak (Reject)**: Mengubah status menjadi `rejected` disertai alasan penolakan (*rejection reason*).
+Platform IKA KPS menerapkan prinsip pendaftaran mandiri terpadu (*Unified Self-Registration*). Karena tidak adanya basis data arsip lama, seluruh profil alumni tercipta dari pendaftaran mandiri oleh alumni yang bersangkutan:
+1. **Status Akun Baru Menunggu Verifikasi (*Pending Review*)**:
+   - Saat alumni mendaftar akun di website, sistem langsung membuat data akun login di `users` (`status: pending`) dan profil di `alumni` (`is_verified: false`).
+   - Alumni dapat langsung login, namun melihat banner notifikasi bahwa akunnya sedang ditinjau pengurus.
+2. **Dashboard Verifikasi Pengurus (`/admin/verifikasi`)**:
+   - Menampilkan daftar permohonan keanggotaan baru dengan badge jumlah antrean pending di sidebar admin.
+   - Filter tab: *Pending (Menunggu)*, *Approved (Aktif)*, dan *Rejected (Ditolak)*.
+3. **Aksi Persetujuan (Approve) & Penolakan (Reject)**:
+   - **Setujui (Approve)**:
+     - Mengubah status akun pengguna menjadi `active`.
+     - Mengubah profil alumni menjadi `is_verified = true` dan mencatat admin pemverifikasi.
+     - **Profil alumni otomatis langsung tayang di direktori publik `/alumni`**.
+     - **Hak akses penuh terbuka otomatis**: Pasang lowongan kerja, submit bisnis alumni, dan RSVP agenda kegiatan.
+   - **Tolak (Reject)**:
+     - Mengubah status akun menjadi `rejected` dan menyimpan alasan penolakan (*rejection reason*).
+     - Pengguna dapat membaca alasan penolakan saat masuk ke akun.
 
 ---
 
-## 2. Perintah Migration Database
+## 2. Arsitektur Basis Data (Tanpa Tabel Tambahan)
 
-Jalankan perintah pembuatan migrasi untuk menambahkan kolom workflow verifikasi pada tabel `registrations`:
+> [!IMPORTANT]
+> **Tidak Menggunakan Tabel `registrations`**:
+> Redundansi tabel `registrations` dihilangkan. Seluruh data identitas akun tersimpan di tabel `users` dan data keanggotaan/almamater tersimpan di tabel `alumni` yang terhubung secara 1-to-1 (`user_id`).
 
-```bash
-php artisan make:migration enhance_registrations_table_with_workflow --table=registrations
-```
+### Kolom Workflow pada Tabel Terkait:
+- **Tabel `users`**:
+  - `status`: enum/string (`pending`, `active`, `rejected`, `suspended`) — default `pending`
+  - `rejection_reason`: text nullable
+- **Tabel `alumni`**:
+  - `is_verified`: boolean — default `false`
+  - `verified_at`: timestamp nullable
+  - `verified_by`: foreignId nullable (constrained ke `users`)
 
-### Kode Migrasi (`database/migrations/xxxx_xx_xx_enhance_registrations_table_with_workflow.php`):
+---
+
+## 3. Middleware Proteksi Hak Akses Alumni
+
+Buat middleware `EnsureAlumniIsApproved` (`app/Http/Middleware/EnsureAlumniIsApproved.php`):
 
 ```php
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace App\Http\Middleware;
 
-return new class extends Migration
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class EnsureAlumniIsApproved
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function handle(Request $request, Closure $next): Response
     {
-        Schema::table('registrations', function (Blueprint $table) {
-            $table->string('status')->default('pending')->after('notes')->index(); // 'pending', 'verified', 'rejected'
-            $table->text('rejection_reason')->nullable()->after('status');
-            $table->timestamp('verified_at')->nullable()->after('rejection_reason');
-            $table->foreignId('verified_by')->nullable()->after('verified_at')->constrained('users')->nullOnDelete();
-            $table->foreignId('alumnus_id')->nullable()->after('verified_by')->constrained('alumni')->nullOnDelete();
+        $user = $request->user();
 
-            $table->index(['status', 'created_at']);
-        });
-    }
+        if (! $user) {
+            return redirect()->route('login');
+        }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('registrations', function (Blueprint $table) {
-            $table->dropForeign(['verified_by']);
-            $table->dropForeign(['alumnus_id']);
-            $table->dropIndex(['status', 'created_at']);
-            $table->dropColumn([
-                'status',
-                'rejection_reason',
-                'verified_at',
-                'verified_by',
-                'alumnus_id',
-            ]);
-        });
-    }
-};
-```
+        // Admin dan pengurus selalu diizinkan
+        if ($user->isAdmin() || $user->isPengurus()) {
+            return $next($request);
+        }
 
----
+        // Alumni harus memiliki status active dan alumnus terverifikasi
+        if ($user->status !== 'active' || ! ($user->alumnus?->is_verified)) {
+            return redirect()->route('profile.show')->with('warning', 'Fitur ini hanya dapat diakses setelah keanggotaan alumni Anda disetujui oleh pengurus.');
+        }
 
-## 3. Model, Factory & Seeder
-
-### A. Update Model `app/Models/Registration.php`
-
-```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-class Registration extends Model
-{
-    use HasFactory;
-
-    protected $fillable = [
-        'full_name',
-        'level',
-        'graduation_year',
-        'phone_whatsapp',
-        'email',
-        'profession',
-        'institution',
-        'domicile',
-        'notes',
-        'status',
-        'rejection_reason',
-        'verified_at',
-        'verified_by',
-        'alumnus_id',
-    ];
-
-    protected $casts = [
-        'verified_at' => 'datetime',
-    ];
-
-    public function verifier(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'verified_by');
-    }
-
-    public function alumnus(): BelongsTo
-    {
-        return $this->belongsTo(Alumnus::class);
+        return $next($request);
     }
 }
 ```
 
-### B. Factory `database/factories/RegistrationFactory.php`
-
-```bash
-php artisan make:factory RegistrationFactory --model=Registration
-```
-
+Daftarkan alias `'alumni.approved'` di `bootstrap/app.php`:
 ```php
-<?php
-
-namespace Database\Factories;
-
-use App\Models\Registration;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-class RegistrationFactory extends Factory
-{
-    protected $model = Registration::class;
-
-    public function definition(): array
-    {
-        return [
-            'full_name' => fake('id_ID')->name(),
-            'level' => fake()->randomElement(['tk', 'sd', 'smp', 'sma']),
-            'graduation_year' => (string) fake()->numberBetween(1990, 2024),
-            'phone_whatsapp' => fake()->phoneNumber(),
-            'email' => fake()->unique()->safeEmail(),
-            'profession' => fake()->jobTitle(),
-            'institution' => fake()->company(),
-            'domicile' => fake()->randomElement(['Balikpapan', 'Samarinda', 'Jakarta', 'Surabaya']),
-            'notes' => fake()->sentence(),
-            'status' => 'pending',
-        ];
-    }
-
-    public function verified(): static
-    {
-        return $this->state(fn () => [
-            'status' => 'verified',
-            'verified_at' => now(),
-        ]);
-    }
-
-    public function rejected(): static
-    {
-        return $this->state(fn () => [
-            'status' => 'rejected',
-            'rejection_reason' => 'Data tidak cocok dengan arsip buku tahunan sekolah.',
-            'verified_at' => now(),
-        ]);
-    }
-}
-```
-
-### C. Seeder `database/seeders/RegistrationSeeder.php`
-
-```bash
-php artisan make:seeder RegistrationSeeder
-```
-
-```php
-<?php
-
-namespace Database\Seeders;
-
-use App\Models\Registration;
-use App\Models\User;
-use Illuminate\Database\Seeder;
-
-class RegistrationSeeder extends Seeder
-{
-    public function run(): void
-    {
-        $admin = User::where('role', 'admin')->first();
-
-        // 8 Pendaftaran Pending
-        Registration::factory()->count(8)->create([
-            'status' => 'pending',
-        ]);
-
-        // 3 Pendaftaran Terverifikasi
-        Registration::factory()->count(3)->create([
-            'status' => 'verified',
-            'verified_at' => now()->subDays(2),
-            'verified_by' => $admin?->id,
-        ]);
-
-        // 2 Pendaftaran Ditolak
-        Registration::factory()->count(2)->create([
-            'status' => 'rejected',
-            'rejection_reason' => 'Nomor kontak tidak dapat dihubungi untuk konfirmasi angkatan.',
-            'verified_at' => now()->subDay(),
-            'verified_by' => $admin?->id,
-        ]);
-    }
-}
+$middleware->alias([
+    'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+    'alumni.approved' => \App\Http\Middleware\EnsureAlumniIsApproved::class,
+]);
 ```
 
 ---
 
-## 4. Panduan & Skenario TDD
+## 4. Panduan & Skenario TDD (Test-Driven Development)
 
 Buat berkas Feature Test dengan PHPUnit:
 ```bash
-php artisan make:test --phpunit Feature/Registration/RegistrationWorkflowTest
+php artisan make:test --phpunit Feature/Admin/AlumniApprovalWorkflowTest
 ```
 
 ### Skenario Uji TDD:
@@ -237,97 +105,107 @@ php artisan make:test --phpunit Feature/Registration/RegistrationWorkflowTest
 ```php
 <?php
 
-namespace Tests\Feature\Registration;
+namespace Tests\Feature\Admin;
 
 use App\Models\Alumnus;
-use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class RegistrationWorkflowTest extends TestCase
+class AlumniApprovalWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_public_can_submit_alumni_registration_form(): void
-    {
-        $payload = [
-            'full_name' => 'Dimas Arya Setiawan',
-            'level' => 'sma',
-            'graduation_year' => '2010',
-            'phone_whatsapp' => '081299887766',
-            'email' => 'dimas.arya@example.com',
-            'profession' => 'Civil Engineer',
-            'institution' => 'PT PP Properti Balikpapan',
-            'domicile' => 'Balikpapan',
-            'notes' => 'Salam kangen angkatan 2010!',
-        ];
-
-        $response = $this->post('/daftar-alumni', $payload);
-
-        $response->assertStatus(302);
-        $response->assertSessionHas('success');
-
-        $this->assertDatabaseHas('registrations', [
-            'email' => 'dimas.arya@example.com',
-            'status' => 'pending',
-        ]);
-    }
-
-    public function test_admin_can_approve_registration_and_automatically_creates_alumnus(): void
+    public function test_admin_can_view_pending_alumni_verification_queue(): void
     {
         $admin = User::factory()->admin()->create();
-        $registration = Registration::factory()->create([
-            'full_name' => 'Sinta Kusuma',
-            'level' => 'sma',
-            'graduation_year' => '2014',
-            'email' => 'sinta@example.com',
-            'profession' => 'Finance Specialist',
-            'status' => 'pending',
+
+        $pendingUser = User::factory()->create(['status' => 'pending']);
+        Alumnus::factory()->create([
+            'user_id' => $pendingUser->id,
+            'name' => 'Calon Alumni Baru',
+            'is_verified' => false,
         ]);
 
-        $response = $this->actingAs($admin)->post("/admin/registrations/{$registration->id}/approve");
+        $response = $this->actingAs($admin)->get('/admin/verifikasi');
+
+        $response->assertStatus(200);
+        $response->assertSee('Calon Alumni Baru');
+    }
+
+    public function test_admin_can_approve_pending_alumnus(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $user = User::factory()->create(['status' => 'pending']);
+        $alumnus = Alumnus::factory()->create([
+            'user_id' => $user->id,
+            'is_verified' => false,
+        ]);
+
+        $response = $this->actingAs($admin)->post("/admin/verifikasi/{$alumnus->id}/approve");
 
         $response->assertRedirect();
         $response->assertSessionHas('success');
 
-        // Pastikan status registrasi terupdate
-        $this->assertDatabaseHas('registrations', [
-            'id' => $registration->id,
-            'status' => 'verified',
-            'verified_by' => $admin->id,
-        ]);
+        $user->refresh();
+        $alumnus->refresh();
 
-        // Pastikan data record Alumnus baru berhasil digenerate otomatis
-        $this->assertDatabaseHas('alumni', [
-            'name' => 'Sinta Kusuma',
-            'level' => 'sma',
-            'full_year' => '2014',
-            'email' => 'sinta@example.com',
-            'profession' => 'Finance Specialist',
+        $this->assertEquals('active', $user->status);
+        $this->assertTrue($alumnus->is_verified);
+        $this->assertEquals($admin->id, $alumnus->verified_by);
+        $this->assertNotNull($alumnus->verified_at);
+    }
+
+    public function test_approved_alumnus_is_immediately_visible_in_public_directory(): void
+    {
+        $alumnus = Alumnus::factory()->create([
+            'name' => 'Hendra Setiawan',
             'is_verified' => true,
         ]);
+
+        $response = $this->get('/alumni');
+        $response->assertStatus(200);
+        $response->assertSee('Hendra Setiawan');
     }
 
-    public function test_admin_can_reject_registration_with_reason(): void
+    public function test_unapproved_alumni_cannot_access_gated_submission_features(): void
+    {
+        $unapprovedUser = User::factory()->create(['status' => 'pending']);
+        Alumnus::factory()->create([
+            'user_id' => $unapprovedUser->id,
+            'is_verified' => false,
+        ]);
+
+        // Mencoba mengakses pendaftaran bisnis mandiri sebelum di-approve
+        $response = $this->actingAs($unapprovedUser)->get('/profil/bisnis/create');
+
+        $response->assertRedirect('/profil');
+        $response->assertSessionHas('warning');
+    }
+
+    public function test_admin_can_reject_alumnus_with_reason(): void
     {
         $admin = User::factory()->admin()->create();
-        $registration = Registration::factory()->create(['status' => 'pending']);
 
-        $response = $this->actingAs($admin)->post("/admin/registrations/{$registration->id}/reject", [
-            'rejection_reason' => 'Identitas tidak ditemukan dalam daftar angkatan.',
+        $user = User::factory()->create(['status' => 'pending']);
+        $alumnus = Alumnus::factory()->create([
+            'user_id' => $user->id,
+            'is_verified' => false,
+        ]);
+
+        $response = $this->actingAs($admin)->post("/admin/verifikasi/{$alumnus->id}/reject", [
+            'rejection_reason' => 'Identitas angkatan tidak dapat dikonfirmasi oleh pengurus.',
         ]);
 
         $response->assertRedirect();
-        $this->assertDatabaseHas('registrations', [
-            'id' => $registration->id,
-            'status' => 'rejected',
-            'rejection_reason' => 'Identitas tidak ditemukan dalam daftar angkatan.',
-        ]);
 
-        $this->assertDatabaseMissing('alumni', [
-            'name' => $registration->full_name,
-        ]);
+        $user->refresh();
+        $alumnus->refresh();
+
+        $this->assertEquals('rejected', $user->status);
+        $this->assertEquals('Identitas angkatan tidak dapat dikonfirmasi oleh pengurus.', $user->rejection_reason);
+        $this->assertFalse($alumnus->is_verified);
     }
 }
 ```
@@ -337,16 +215,12 @@ class RegistrationWorkflowTest extends TestCase
 ## 5. Rincian Endpoint & Route
 
 ```php
-// Form Publik
-Route::post('/daftar-alumni', [RegistrationController::class, 'store'])->name('registration.store');
-
-// Admin Panel (Role Protected)
+// Admin Panel Verification (Role Protected)
 Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/registrations', [AdminRegistrationController::class, 'index'])->name('registrations.index');
-    Route::get('/registrations/{registration}', [AdminRegistrationController::class, 'show'])->name('registrations.show');
-    Route::post('/registrations/{registration}/approve', [AdminRegistrationController::class, 'approve'])->name('registrations.approve');
-    Route::post('/registrations/{registration}/reject', [AdminRegistrationController::class, 'reject'])->name('registrations.reject');
-    Route::delete('/registrations/{registration}', [AdminRegistrationController::class, 'destroy'])->name('registrations.destroy');
+    Route::get('/verifikasi', [AlumniVerificationController::class, 'index'])->name('verification.index');
+    Route::get('/verifikasi/{alumnus}', [AlumniVerificationController::class, 'show'])->name('verification.show');
+    Route::post('/verifikasi/{alumnus}/approve', [AlumniVerificationController::class, 'approve'])->name('verification.approve');
+    Route::post('/verifikasi/{alumnus}/reject', [AlumniVerificationController::class, 'reject'])->name('verification.reject');
 });
 ```
 
@@ -354,13 +228,12 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan `php artisan make:migration enhance_registrations_table_with_workflow`
-- [ ] Terapkan fillable, casts, dan relasi di Model `Registration`
-- [ ] Buat Form Request `RejectRegistrationRequest`
-- [ ] Implementasikan Service/Action `ApproveRegistrationAction` (transaksional DB: update status + `Alumnus::create`)
-- [ ] Buat `AdminRegistrationController`
-- [ ] Buat Blade view admin: `admin/registrations/index.blade.php` (Filter tabs pending/verified/rejected, badge counter)
-- [ ] Buat modal persetujuan dan penolakan (dengan input alasan) di tampilan detail
-- [ ] Tulis Factory dan Seeder
-- [ ] Jalankan pengujian TDD dan pastikan semua skenario lolos 100%
-- [ ] Jalankan `vendor/bin/pint --dirty --format agent`
+- [x] Pastikan kolom `status` & `rejection_reason` ada di tabel `users` (di file migrasi create dasar)
+- [x] Pastikan kolom `is_verified`, `verified_at`, `verified_by` ada di tabel `alumni`
+- [x] Buat middleware `EnsureAlumniIsApproved` dan daftarkan alias `alumni.approved`
+- [x] Buat Form Request `RejectAlumnusRequest`
+- [x] Buat Controller `AlumniVerificationController`
+- [x] Buat Blade view admin: `admin/verification/index.blade.php` (Tab antrean: Pending, Disetujui, Ditolak)
+- [x] Buat modal konfirmasi Approve dan modal Reject dengan input teks alasan
+- [x] Terapkan TDD: jalankan pengujian sampai lulus 100%
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`

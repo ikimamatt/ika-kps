@@ -21,15 +21,15 @@ class HomeController extends Controller
         $level = $request->query('level');
         $yearRange = $request->query('year');
 
-        $alumniQuery = Alumnus::query();
+        $alumniQuery = Alumnus::query()->verified();
 
         if ($search) {
             $alumniQuery->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('profession', 'like', "%{$search}%")
-                    ->orWhere('summary', 'like', "%{$search}%")
-                    ->orWhere('location', 'like', "%{$search}%")
-                    ->orWhere('badge', 'like', "%{$search}%");
+                    ->orWhere('institution', 'like', "%{$search}%")
+                    ->orWhere('domicile', 'like', "%{$search}%")
+                    ->orWhere('summary', 'like', "%{$search}%");
             });
         }
 
@@ -51,12 +51,40 @@ class HomeController extends Controller
             }
         }
 
-        $alumni = $alumniQuery->orderBy('id', 'desc')->get();
-        $businesses = Business::all();
-        $jobVacancies = JobVacancy::all();
-        $programs = Program::all();
-        $articles = Article::orderBy('id', 'desc')->get();
+        $totalAlumniCount = Alumnus::query()->verified()->count();
+        $totalBusinessesCount = Business::query()->published()->count();
+        $totalArticlesCount = Article::published()->count();
 
-        return view('home', compact('alumni', 'businesses', 'jobVacancies', 'programs', 'articles', 'search', 'level', 'yearRange'));
+        // Paginate alumni directory preview with 6 items per page, fragmenting to section anchor
+        $alumni = $alumniQuery->orderBy('id', 'desc')->paginate(6)->withQueryString()->fragment('direktori-alumni');
+
+        // Showcase businesses limited to top 6
+        $businesses = Business::query()->published()->orderBy('id', 'desc')->take(6)->get();
+
+        // Active job vacancies limited to 4
+        $jobVacancies = JobVacancy::query()->active()->orderBy('id', 'desc')->take(4)->get();
+
+        // Featured community programs limited to 4
+        $programs = Program::take(4)->get();
+
+        // Showcase latest articles limited to 3 published
+        $articles = Article::published()->latest('published_at')->take(3)->get();
+        if ($articles->isEmpty()) {
+            $articles = Article::orderBy('id', 'desc')->take(3)->get();
+        }
+
+        return view('home', compact(
+            'alumni',
+            'businesses',
+            'jobVacancies',
+            'programs',
+            'articles',
+            'search',
+            'level',
+            'yearRange',
+            'totalAlumniCount',
+            'totalBusinessesCount',
+            'totalArticlesCount'
+        ));
     }
 }

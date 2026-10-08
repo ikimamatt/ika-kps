@@ -1,6 +1,6 @@
 # 🎯 Task 06: Program Kerja Organisasi & Progress Pencapaian
 
-> **Status:** Siap Dikerjakan  
+> **Status:** Selesai (Completed ✅)  
 > **Prioritas:** 🟠 High / Core Content (Fase 2)  
 > **Modul PRD:** Modul 6: Program Kerja & Kegiatan (CRUD)  
 > **Ketergantungan:** Task 01 (Autentikasi & Multi-Role)  
@@ -16,66 +16,38 @@ Modul Program Kerja menampilkan inisiatif strategis IKA KPS Balikpapan kepada al
 
 ---
 
-## 2. Perintah Migration Database
+## 2. Pembaruan Skema Basis Data (Langsung pada Migration Dasar)
 
-Jalankan perintah migrasi:
+> [!IMPORTANT]
+> **Aturan**: Jangan membuat file migrasi `enhance_programs_table_with_slug_and_targets` atau migrasi add lainnya. Perbarui langsung skema dasar pada file `database/migrations/2026_10_06_071757_create_programs_table.php`.
 
-```bash
-php artisan make:migration enhance_programs_table_with_slug_and_targets --table=programs
-```
-
-### Kode Migrasi (`database/migrations/xxxx_xx_xx_enhance_programs_table_with_slug_and_targets.php`):
+### Definisi Skema Tabel `programs`:
 
 ```php
-<?php
+Schema::create('programs', function (Blueprint $table) {
+    $table->id();
+    $table->string('title');
+    $table->string('slug')->unique();
+    $table->string('icon')->nullable();
+    $table->string('icon_bg_class')->nullable();
+    $table->text('description');
+    $table->longText('body')->nullable();
+    $table->string('progress_label')->nullable();
+    $table->string('progress_status')->nullable();
+    $table->unsignedInteger('progress_percent')->default(0);
+    $table->string('bar_color_class')->nullable();
+    $table->string('achievement_text')->nullable();
+    $table->decimal('target_amount', 15, 2)->nullable();
+    $table->decimal('collected_amount', 15, 2)->default(0);
+    $table->string('status')->default('active')->index(); // upcoming, active, completed
+    $table->date('start_date')->nullable();
+    $table->date('end_date')->nullable();
+    $table->text('image_url')->nullable();
+    $table->timestamps();
+    $table->softDeletes();
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('programs', function (Blueprint $table) {
-            $table->string('slug')->nullable()->unique()->after('title');
-            $table->longText('body')->nullable()->after('description');
-            $table->decimal('target_amount', 15, 2)->nullable()->after('achievement_text');
-            $table->decimal('collected_amount', 15, 2)->default(0)->after('target_amount');
-            $table->string('status')->default('active')->after('collected_amount')->index(); // 'upcoming', 'active', 'completed'
-            $table->date('start_date')->nullable()->after('status');
-            $table->date('end_date')->nullable()->after('start_date');
-            $table->text('image_url')->nullable()->after('end_date');
-            $table->softDeletes()->after('updated_at');
-
-            $table->index(['status', 'start_date']);
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('programs', function (Blueprint $table) {
-            $table->dropIndex(['status', 'start_date']);
-            $table->dropSoftDeletes();
-            $table->dropColumn([
-                'slug',
-                'body',
-                'target_amount',
-                'collected_amount',
-                'status',
-                'start_date',
-                'end_date',
-                'image_url',
-            ]);
-        });
-    }
-};
+    $table->index(['status', 'start_date']);
+});
 ```
 
 ---
@@ -324,13 +296,13 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan migrasi kolom tabel `programs`
-- [ ] Atur Model `Program` dan casts
-- [ ] Buat Form Request `StoreProgramRequest`
-- [ ] Buat Controller Publik & Admin
-- [ ] Buat tampilan Blade:
+- [x] Jalankan migrasi kolom tabel `programs`
+- [x] Atur Model `Program` dan casts
+- [x] Buat Form Request `StoreProgramRequest`
+- [x] Buat Controller Publik & Admin
+- [x] Buat tampilan Blade:
   - `program/index.blade.php` (Card grid dengan visual progress bar dinamis)
   - `program/show.blade.php` (Detail program, ringkasan capaian, CTA donasi/dukungan)
   - `admin/programs/index.blade.php` & `admin/programs/create.blade.php`
-- [ ] Jalankan pengujian TDD dan pastikan hijau
-- [ ] Format kode: `vendor/bin/pint --dirty --format agent`
+- [x] Jalankan pengujian TDD dan pastikan hijau
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`

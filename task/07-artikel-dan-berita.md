@@ -1,6 +1,6 @@
 # 📰 Task 07: Berita, Artikel & Publikasi Alumni
 
-> **Status:** Siap Dikerjakan  
+> **Status:** ✅ Selesai Dikerjakan  
 > **Prioritas:** 🟠 High / Core Content (Fase 2)  
 > **Modul PRD:** Modul 7: Artikel & Berita (CRUD)  
 > **Ketergantungan:** Task 01 (Autentikasi & Multi-Role)  
@@ -16,61 +16,33 @@ Modul Artikel & Berita menjadi media publikasi resmi kabar ikatan alumni, catata
 
 ---
 
-## 2. Perintah Migration Database
+## 2. Pembaruan Skema Basis Data (Langsung pada Migration Dasar)
 
-Jalankan perintah migrasi:
+> [!IMPORTANT]
+> **Aturan**: Jangan membuat file migrasi `enhance_articles_table_with_body_and_author` atau migrasi add lainnya. Perbarui langsung skema dasar pada file `database/migrations/2026_10_06_071758_create_articles_table.php`.
 
-```bash
-php artisan make:migration enhance_articles_table_with_body_and_author --table=articles
-```
-
-### Kode Migrasi (`database/migrations/xxxx_xx_xx_enhance_articles_table_with_body_and_author.php`):
+### Definisi Skema Tabel `articles`:
 
 ```php
-<?php
+Schema::create('articles', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
+    $table->string('title');
+    $table->string('slug')->unique();
+    $table->string('category')->index();
+    $table->string('badge_bg_class')->nullable();
+    $table->text('summary');
+    $table->longText('body')->nullable();
+    $table->string('author_and_date')->nullable();
+    $table->text('image_url')->nullable();
+    $table->string('status')->default('draft')->index(); // draft, published
+    $table->timestamp('published_at')->nullable();
+    $table->unsignedInteger('views_count')->default(0);
+    $table->timestamps();
+    $table->softDeletes();
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('articles', function (Blueprint $table) {
-            $table->longText('body')->nullable()->after('summary');
-            $table->foreignId('author_id')->nullable()->after('id')->constrained('users')->nullOnDelete();
-            $table->string('status')->default('draft')->after('category')->index(); // 'draft', 'published'
-            $table->timestamp('published_at')->nullable()->after('status');
-            $table->unsignedInteger('views_count')->default(0)->after('published_at');
-            $table->softDeletes()->after('updated_at');
-
-            $table->index(['status', 'published_at', 'category']);
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('articles', function (Blueprint $table) {
-            $table->dropForeign(['author_id']);
-            $table->dropIndex(['status', 'published_at', 'category']);
-            $table->dropSoftDeletes();
-            $table->dropColumn([
-                'body',
-                'author_id',
-                'status',
-                'published_at',
-                'views_count',
-            ]);
-        });
-    }
-};
+    $table->index(['status', 'published_at', 'category']);
+});
 ```
 
 ---
@@ -331,13 +303,13 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
 
 ## 6. Checklist Implementasi
 
-- [ ] Jalankan migrasi kolom `articles`
-- [ ] Atur model `Article`, relasi author, dan scope `published`
-- [ ] Buat Form Request `StoreArticleRequest` & `UpdateArticleRequest`
-- [ ] Buat Controller Publik & Admin
-- [ ] Buat tampilan Blade:
+- [x] Jalankan migrasi kolom `articles`
+- [x] Atur model `Article`, relasi author, dan scope `published`
+- [x] Buat Form Request `StoreArticleRequest` & `UpdateArticleRequest`
+- [x] Buat Controller Publik & Admin
+- [x] Buat tampilan Blade:
   - `article/index.blade.php` (Headline carousel/banner, kategori tabs, grid kartu)
   - `article/show.blade.php` (Halaman baca responsif, format tipografi artikel, artikel terkait)
   - `admin/articles/index.blade.php`, `admin/articles/create.blade.php`, `admin/articles/edit.blade.php`
-- [ ] Tulis test TDD dan jalankan
-- [ ] Format kode: `vendor/bin/pint --dirty --format agent`
+- [x] Tulis test TDD dan jalankan
+- [x] Format kode: `vendor/bin/pint --dirty --format agent`
