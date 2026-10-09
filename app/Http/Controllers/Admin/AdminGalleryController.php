@@ -121,6 +121,11 @@ class AdminGalleryController extends Controller
 
             $path = $request->file('cover')->store('galleries/covers', 'public');
             $data['cover_image_url'] = Storage::url($path);
+        } elseif (empty($data['cover_image_url'])) {
+            $data['cover_image_url'] = $gallery->cover_image_url;
+        } elseif ($gallery->cover_image_url && $data['cover_image_url'] !== $gallery->cover_image_url && Str::contains($gallery->cover_image_url, '/storage/galleries/covers/')) {
+            $oldPath = Str::after($gallery->cover_image_url, '/storage/');
+            Storage::disk('public')->delete($oldPath);
         }
 
         $gallery->update($data);

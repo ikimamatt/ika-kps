@@ -124,6 +124,28 @@ class AdminGalleryCrudTest extends TestCase
         ]);
     }
 
+    public function test_updating_gallery_retains_existing_cover_when_not_reuploaded(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $gallery = Gallery::factory()->create([
+            'cover_image_url' => '/storage/galleries/covers/sample-test.png',
+        ]);
+
+        $payload = [
+            'title' => 'Judul Baru',
+            'slug' => $gallery->slug,
+            'category' => 'Kegiatan',
+            'status' => 'published',
+            'cover_image_url' => '', // Empty external URL input
+        ];
+
+        $response = $this->actingAs($admin)->put(route('admin.galleries.update', $gallery->id), $payload);
+
+        $response->assertRedirect(route('admin.galleries.index'));
+        $gallery->refresh();
+        $this->assertEquals('/storage/galleries/covers/sample-test.png', $gallery->cover_image_url);
+    }
+
     public function test_admin_can_delete_gallery_and_its_photos(): void
     {
         $admin = User::factory()->admin()->create();

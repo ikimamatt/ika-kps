@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -69,24 +70,30 @@ class ProfileController extends Controller
             'avatar_url' => $avatarUrl,
         ]);
 
-        if ($user->alumnus) {
-            $year = $request->validated('graduation_year');
+        $year = $request->validated('graduation_year');
+        $alumnusData = [
+            'name' => $user->name,
+            'title' => $request->validated('title'),
+            'level' => $request->validated('level', $user->alumnus?->level ?? 'sma'),
+            'class_year' => $year ? substr((string) $year, -2) : $user->alumnus?->class_year,
+            'full_year' => $year ? (string) $year : $user->alumnus?->full_year,
+            'profession' => $request->validated('profession'),
+            'institution' => $request->validated('institution'),
+            'domicile' => $request->validated('domicile'),
+            'summary' => $request->validated('summary'),
+            'avatar_url' => $user->avatar_url,
+            'phone' => $user->phone,
+            'linkedin_url' => $request->validated('linkedin_url'),
+            'instagram_handle' => $request->validated('instagram_handle'),
+        ];
 
-            $user->alumnus->update([
-                'name' => $user->name,
-                'title' => $request->validated('title'),
-                'level' => $request->validated('level', $user->alumnus->level),
-                'class_year' => $year ? substr((string) $year, -2) : $user->alumnus->class_year,
-                'full_year' => $year ? (string) $year : $user->alumnus->full_year,
-                'profession' => $request->validated('profession'),
-                'institution' => $request->validated('institution'),
-                'domicile' => $request->validated('domicile'),
-                'summary' => $request->validated('summary'),
-                'avatar_url' => $user->avatar_url,
-                'phone' => $user->phone,
-                'linkedin_url' => $request->validated('linkedin_url'),
-                'instagram_handle' => $request->validated('instagram_handle'),
-            ]);
+        if ($user->alumnus) {
+            $user->alumnus->update($alumnusData);
+        } elseif ($user->role === 'alumni') {
+            $alumnusData['email'] = $user->email;
+            $alumnusData['slug'] = Str::slug($user->name.'-'.($year ?? rand(100, 999)));
+            $alumnusData['is_verified'] = $user->status === 'active';
+            $user->alumnus()->create($alumnusData);
         }
 
         return redirect()->route('profile.show')->with('success', 'Profil Anda berhasil diperbarui.');

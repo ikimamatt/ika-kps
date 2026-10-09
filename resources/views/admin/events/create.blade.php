@@ -180,7 +180,7 @@
                         <span>Atau URL Poster Banner Eksternal</span>
                         <span class="text-2xs font-normal text-on-surface-variant">(Opsional)</span>
                     </label>
-                    <input type="url" id="image_url" name="image_url" value="{{ old('image_url') }}" 
+                    <input type="text" id="image_url" name="image_url" value="{{ old('image_url') }}" 
                            placeholder="https://images.unsplash.com/photo-..."
                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50">
                 </div>

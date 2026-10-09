@@ -179,6 +179,13 @@
                 </div>
             @endif
 
+            @php
+                $externalEventUrl = '';
+                if ($event->image_url && ! \Illuminate\Support\Str::startsWith($event->image_url, ['/storage/', 'storage/'])) {
+                    $externalEventUrl = $event->image_url;
+                }
+            @endphp
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                     <label for="image" class="block text-xs font-bold text-primary">
@@ -194,7 +201,8 @@
                         <span>Atau URL Poster Banner Eksternal</span>
                         <span class="text-2xs font-normal text-on-surface-variant">(Opsional)</span>
                     </label>
-                    <input type="url" id="image_url" name="image_url" value="{{ old('image_url', $event->image_url) }}" 
+                    <input type="text" id="image_url" name="image_url" value="{{ old('image_url', $externalEventUrl) }}" 
+                           placeholder="https://images.unsplash.com/photo-..."
                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50">
                 </div>
             </div>

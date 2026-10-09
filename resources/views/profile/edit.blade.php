@@ -73,9 +73,15 @@
                         </button>
                     </div>
 
+                    @php
+                        $externalAvatarUrl = '';
+                        if ($user->avatar_url && ! \Illuminate\Support\Str::startsWith($user->avatar_url, ['/storage/', 'storage/'])) {
+                            $externalAvatarUrl = $user->avatar_url;
+                        }
+                    @endphp
                     <div id="avatar-url-wrapper" class="hidden mt-3 pt-3 border-t border-outline-variant/30">
-                        <input type="url" id="avatar_url" name="avatar_url" 
-                               value="{{ old('avatar_url', $user->avatar_url ?? '') }}"
+                        <input type="text" id="avatar_url" name="avatar_url" 
+                               value="{{ old('avatar_url', $externalAvatarUrl) }}"
                                placeholder="Atau tempel tautan URL gambar (https://...)" 
                                class="w-full px-3.5 py-2 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
                     </div>

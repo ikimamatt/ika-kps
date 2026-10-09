@@ -124,6 +124,13 @@
                 </div>
             @endif
 
+            @php
+                $externalCoverUrl = '';
+                if ($gallery->cover_image_url && ! \Illuminate\Support\Str::startsWith($gallery->cover_image_url, ['/storage/', 'storage/'])) {
+                    $externalCoverUrl = $gallery->cover_image_url;
+                }
+            @endphp
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                     <label for="cover" class="block text-xs font-bold text-primary">
@@ -137,8 +144,10 @@
                 <div class="space-y-1.5">
                     <label for="cover_image_url" class="block text-xs font-bold text-primary">
                         <span>Atau URL Sampul Eksternal</span>
+                        <span class="text-2xs font-normal text-on-surface-variant">(Opsional)</span>
                     </label>
-                    <input type="url" id="cover_image_url" name="cover_image_url" value="{{ old('cover_image_url', $gallery->cover_image_url) }}" 
+                    <input type="text" id="cover_image_url" name="cover_image_url" value="{{ old('cover_image_url', $externalCoverUrl) }}" 
+                           placeholder="https://images.unsplash.com/..."
                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50">
                 </div>
             </div>

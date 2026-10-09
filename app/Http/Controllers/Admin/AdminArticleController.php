@@ -129,6 +129,11 @@ class AdminArticleController extends Controller
 
             $path = $request->file('image')->store('articles', 'public');
             $data['image_url'] = Storage::url($path);
+        } elseif (empty($data['image_url'])) {
+            $data['image_url'] = $article->image_url;
+        } elseif ($article->image_url && $data['image_url'] !== $article->image_url && Str::contains($article->image_url, '/storage/articles/')) {
+            $oldPath = Str::after($article->image_url, '/storage/');
+            Storage::disk('public')->delete($oldPath);
         }
 
         if (empty($data['badge_bg_class'])) {

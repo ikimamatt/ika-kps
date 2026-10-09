@@ -101,6 +101,9 @@
             </div>
 
             <!-- Kartu Status Alumni Terkait -->
+            @php
+                $isFeatureAccessible = $user->isAdmin() || $user->isPengurus() || ($user->status === 'active' && $alumnus && $alumnus->is_verified);
+            @endphp
             <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-6 shadow-sm">
                 <div class="flex items-center justify-between pb-4 border-b border-outline-variant/40 mb-4">
                     <div>
@@ -109,7 +112,15 @@
                     </div>
                 </div>
 
-                @if ($user->status === 'active' && $alumnus && $alumnus->is_verified)
+                @if ($user->isAdmin() || $user->isPengurus())
+                    <div class="p-4 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-start gap-3">
+                        <span class="material-symbols-outlined text-primary text-[24px]">shield_person</span>
+                        <div>
+                            <span class="font-bold text-sm block">Akses Pengurus / Administrator</span>
+                            <p class="text-xs mt-1">Anda masuk dengan akun <strong>{{ $user->isAdmin() ? 'Super Administrator' : 'Pengurus Organisasi' }}</strong> yang memiliki hak kelola penuh terhadap direktori dan fitur portal IKA KPS.</p>
+                        </div>
+                    </div>
+                @elseif ($user->status === 'active' && $alumnus && $alumnus->is_verified)
                     <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start gap-3">
                         <span class="material-symbols-outlined text-emerald-600 text-[24px]">verified</span>
                         <div>
@@ -147,7 +158,7 @@
                         <p class="font-body-md text-xs text-on-surface-variant mt-0.5">Daftarkan usaha atau produk Anda ke direktori publik IKA KPS.</p>
                     </div>
 
-                    @if ($user->status === 'active' && $alumnus && $alumnus->is_verified)
+                    @if ($isFeatureAccessible)
                         <a href="{{ route('profile.business.create') }}" 
                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs hover:bg-primary-container transition-all shadow-sm shrink-0">
                             <span class="material-symbols-outlined text-[16px]">add_circle</span>
@@ -156,7 +167,7 @@
                     @endif
                 </div>
 
-                @if (! ($user->status === 'active' && $alumnus && $alumnus->is_verified))
+                @if (! $isFeatureAccessible)
                     <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface-variant flex items-center gap-3">
                         <span class="material-symbols-outlined text-on-surface-variant text-[20px]">lock</span>
                         <span>Fitur pendaftaran bisnis alumni akan aktif otomatis setelah akun keanggotaan Anda diverifikasi oleh pengurus.</span>
@@ -202,13 +213,13 @@
                                 <div class="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                                     @if ($biz->status === 'published')
                                         <a href="{{ route('business.show', $biz->slug) }}" 
-                                           class="px-3 py-1.5 rounded-lg border border-outline-variant text-[11px] font-bold text-on-surface hover:bg-surface-container transition-colors inline-flex items-center gap-1">
+                                            class="px-3 py-1.5 rounded-lg border border-outline-variant text-[11px] font-bold text-on-surface hover:bg-surface-container transition-colors inline-flex items-center gap-1">
                                             <span class="material-symbols-outlined text-[14px]">visibility</span>
                                             <span>Lihat Publik</span>
                                         </a>
                                     @endif
                                     <a href="{{ route('profile.business.edit', $biz->id) }}" 
-                                       class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-[11px] font-bold text-primary transition-colors inline-flex items-center gap-1">
+                                        class="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-[11px] font-bold text-primary transition-colors inline-flex items-center gap-1">
                                         <span class="material-symbols-outlined text-[14px]">edit</span>
                                         <span>Edit</span>
                                     </a>
@@ -237,7 +248,7 @@
                         <p class="font-body-md text-xs text-on-surface-variant mt-0.5">Berbagi kesempatan karir dari instansi/perusahaan Anda untuk sesama rekan alumni.</p>
                     </div>
 
-                    @if ($user->status === 'active' && $alumnus && $alumnus->is_verified)
+                    @if ($isFeatureAccessible)
                         <a href="{{ route('profile.job.create') }}" 
                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs hover:bg-primary-container transition-all shadow-sm shrink-0">
                             <span class="material-symbols-outlined text-[16px]">add_circle</span>
@@ -246,7 +257,7 @@
                     @endif
                 </div>
 
-                @if (! ($user->status === 'active' && $alumnus && $alumnus->is_verified))
+                @if (! $isFeatureAccessible)
                     <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface-variant flex items-center gap-3">
                         <span class="material-symbols-outlined text-on-surface-variant text-[20px]">lock</span>
                         <span>Fitur berbagi info lowongan alumni aktif setelah keanggotaan Anda diverifikasi.</span>

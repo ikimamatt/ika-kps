@@ -108,6 +108,11 @@ class AdminEventController extends Controller
 
             $path = $request->file('image')->store('events', 'public');
             $data['image_url'] = Storage::url($path);
+        } elseif (empty($data['image_url'])) {
+            $data['image_url'] = $event->image_url;
+        } elseif ($event->image_url && $data['image_url'] !== $event->image_url && Str::contains($event->image_url, '/storage/events/')) {
+            $oldPath = Str::after($event->image_url, '/storage/');
+            Storage::disk('public')->delete($oldPath);
         }
 
         $event->update($data);
