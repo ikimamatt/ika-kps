@@ -25,13 +25,20 @@
             <form action="{{ route('business.index') }}" method="GET" class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama usaha, produk, kota, atau pemilik alumni..." 
-                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ request('q') }}" 
+                           aria-label="Cari nama usaha, produk, kota, atau pemilik alumni"
+                           placeholder="Cari nama usaha, produk, kota, atau pemilik alumni..." 
+                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all min-h-[44px]">
                 </div>
 
-                <div class="w-full md:w-56">
-                    <select name="category" onchange="this.form.submit()"
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                <div class="relative w-full md:w-60 group">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">category</span>
+                    <select name="category" 
+                            aria-label="Filter berdasarkan kategori usaha"
+                            onchange="this.form.submit()"
+                            class="w-full pl-10.5 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer min-h-[44px]">
                         <option value="">Semua Kategori Usaha</option>
                         @foreach ($categories as $cat)
                             @if ($cat !== 'Semua Kategori')
@@ -41,9 +48,10 @@
                             @endif
                         @endforeach
                     </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
                 </div>
 
-                <button type="submit" class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-container transition-all shadow-sm">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-container transition-all shadow-sm min-h-[44px] flex items-center justify-center">
                     Cari Bisnis
                 </button>
             </form>
@@ -52,13 +60,13 @@
             <div class="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs">
                 <span class="text-[11px] font-bold text-on-surface-variant shrink-0 mr-1">Kategori:</span>
                 <a href="{{ route('business.index') }}" 
-                   class="px-3 py-1 rounded-lg font-semibold shrink-0 transition-colors {{ ! request('category') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container hover:bg-surface-container-high text-on-surface' }}">
+                   class="px-3.5 py-2 rounded-xl font-semibold shrink-0 transition-colors min-h-[38px] inline-flex items-center justify-center {{ ! request('category') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container hover:bg-surface-container-high text-on-surface' }}">
                     Semua
                 </a>
                 @foreach ($categories as $cat)
                     @if ($cat !== 'Semua Kategori')
                         <a href="{{ route('business.index', ['category' => $cat]) }}" 
-                           class="px-3 py-1 rounded-lg font-semibold shrink-0 transition-colors {{ request('category') === $cat ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container hover:bg-surface-container-high text-on-surface' }}">
+                           class="px-3.5 py-2 rounded-xl font-semibold shrink-0 transition-colors min-h-[38px] inline-flex items-center justify-center {{ request('category') === $cat ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container hover:bg-surface-container-high text-on-surface' }}">
                             {{ $cat }}
                         </a>
                     @endif
@@ -74,17 +82,19 @@
                     <div class="relative h-48 w-full bg-surface-container overflow-hidden">
                         @if ($biz->image_url)
                             <img src="{{ $biz->image_url }}" alt="{{ $biz->name }}" 
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1556742049-0a67c5574f73?w=600&auto=format&fit=crop';"
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-primary/5 text-primary">
                                 <span class="material-symbols-outlined text-5xl">storefront</span>
                             </div>
                         @endif
-                        <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 text-white backdrop-blur-xs">
+                        <span class="absolute top-3 left-3 px-3 py-1 rounded-full text-2xs font-extrabold uppercase tracking-wider bg-black/60 text-white backdrop-blur-xs">
                             {{ $biz->category }}
                         </span>
                         @if ($biz->city)
-                            <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-white/90 text-on-surface shadow-xs flex items-center gap-0.5">
+                            <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-2xs font-bold bg-white/90 text-on-surface shadow-xs flex items-center gap-0.5">
                                 <span class="material-symbols-outlined text-[12px] text-secondary">location_on</span>
                                 {{ $biz->city }}
                             </span>

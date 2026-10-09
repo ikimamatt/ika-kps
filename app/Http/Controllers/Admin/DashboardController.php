@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Alumnus;
 use App\Models\Article;
 use App\Models\Business;
+use App\Models\Contact;
 use App\Models\JobVacancy;
 use App\Models\Program;
 use App\Models\User;
@@ -27,6 +28,7 @@ class DashboardController extends Controller
             'active_jobs' => Schema::hasTable('job_vacancies') ? JobVacancy::where('status', 'published')->count() : 0,
             'total_programs' => Schema::hasTable('programs') ? Program::count() : 0,
             'total_articles' => Schema::hasTable('articles') ? Article::count() : 0,
+            'unread_contacts' => Schema::hasTable('contacts') ? Contact::where('is_read', false)->count() : 0,
         ];
 
         $latestPendingAlumni = User::with('alumnus')
@@ -35,6 +37,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $latestArticles = Schema::hasTable('articles')
+            ? Article::latest('id')->take(3)->get()
+            : collect();
+
         $alumniDistribution = [
             'sma' => Alumnus::where('level', 'sma')->count(),
             'smp' => Alumnus::where('level', 'smp')->count(),
@@ -42,6 +48,6 @@ class DashboardController extends Controller
             'tk' => Alumnus::where('level', 'tk')->count(),
         ];
 
-        return view('admin.dashboard', compact('metrics', 'latestPendingAlumni', 'alumniDistribution'));
+        return view('admin.dashboard', compact('metrics', 'latestPendingAlumni', 'latestArticles', 'alumniDistribution'));
     }
 }

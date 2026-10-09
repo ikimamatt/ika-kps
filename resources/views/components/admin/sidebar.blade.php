@@ -4,24 +4,24 @@
     $unreadContactsCount = \App\Models\Contact::where('is_read', false)->count();
 @endphp
 
-<aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-lowest border-r border-outline-variant/40 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0">
+<aside id="admin-sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-surface-container-lowest border-r border-outline-variant/40 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 shadow-sm">
     <!-- Brand Logo -->
-    <div class="h-20 flex items-center justify-between px-6 border-b border-outline-variant/40">
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-primary text-on-primary font-black flex items-center justify-center text-base tracking-wider shadow-sm">
-                KPS
-            </div>
-            <div>
-                <span class="font-headline-sm font-extrabold text-sm tracking-tight text-primary block leading-none">
+    <div class="h-20 flex items-center justify-between px-5 border-b border-outline-variant/40">
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 group">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhOhr--lV8imxPKdTS8bKYLp0QWuGXP6MYlEpTQEezQM2FMXiyRg_ak2cdwWVr6LgLwzeDss7cUNXJEdSIBLAILXsDQzpFJt1UF0Q8N7zUWoaDkHI8FbmKvkTd4Zi4yfy1bCgfdM4Q8oRO7CjdWVFsRUjnZ6jBxTDJSblWbAbInEYQSh43Nhz5Wq0WD3dFpefWbEpGN2j7kpIDx6BW2xT6v9VSfgaCXwdopJhr8jywbC2myMHBtdD4S5Rb5HvHmuThW2g" 
+                 alt="Logo IKA KPS" 
+                 class="w-10 h-10 rounded-full object-contain ring-2 ring-secondary/25 group-hover:ring-secondary/60 transition-all shrink-0">
+            <div class="min-w-0">
+                <span class="font-headline-sm font-extrabold text-sm tracking-tight text-primary block leading-none truncate group-hover:text-secondary transition-colors">
                     IKA KPS
                 </span>
-                <span class="text-[10px] font-bold tracking-widest text-secondary uppercase block mt-1">
-                    Panel Admin
+                <span class="text-[11px] font-bold tracking-widest text-secondary uppercase block mt-1">
+                    Panel Pengurus
                 </span>
             </div>
         </a>
-        <button type="button" onclick="toggleAdminSidebar()" class="lg:hidden p-1.5 rounded-lg text-on-surface-variant hover:text-primary">
-            <span class="material-symbols-outlined text-[20px]">close</span>
+        <button type="button" onclick="toggleAdminSidebar(false)" class="lg:hidden w-10 h-10 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-xl text-on-surface-variant hover:text-primary hover:bg-surface-container active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/50 transition-all cursor-pointer" aria-label="Tutup Menu">
+            <span class="material-symbols-outlined text-[22px]">close</span>
         </button>
     </div>
 
@@ -29,7 +29,7 @@
     <div class="flex-1 overflow-y-auto px-4 py-5 space-y-6">
         <!-- Main Section -->
         <div>
-            <span class="px-3 text-[10px] font-extrabold tracking-widest uppercase text-on-surface-variant/70 block mb-2">
+            <span class="px-3 text-[11px] font-extrabold tracking-widest uppercase text-on-surface-variant/70 block mb-2">
                 Menu Utama
             </span>
             <div class="space-y-1">
@@ -52,7 +52,7 @@
                         <span>Verifikasi Pendaftaran</span>
                     </div>
                     @if ($pendingBadge > 0)
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ request()->routeIs('admin.verification.*') ? 'bg-amber-400 text-stone-900' : 'bg-amber-100 text-amber-800' }}">
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold {{ request()->routeIs('admin.verification.*') ? 'bg-amber-400 text-amber-950' : 'bg-amber-100 text-amber-900' }}">
                             {{ $pendingBadge }}
                         </span>
                     @endif
@@ -62,7 +62,7 @@
 
         <!-- Content Section -->
         <div>
-            <span class="px-3 text-[10px] font-extrabold tracking-widest uppercase text-on-surface-variant/70 block mb-2">
+            <span class="px-3 text-[11px] font-extrabold tracking-widest uppercase text-on-surface-variant/70 block mb-2">
                 Konten &amp; Aktivitas
             </span>
             <div class="space-y-1">
@@ -79,7 +79,7 @@
                         <span>Bursa Kerja</span>
                     </div>
                     @if ($pendingJobsCount > 0)
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ request()->routeIs('admin.job-vacancies.*') ? 'bg-amber-400 text-stone-900' : 'bg-amber-100 text-amber-800' }}">
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold {{ request()->routeIs('admin.job-vacancies.*') ? 'bg-amber-400 text-amber-950' : 'bg-amber-100 text-amber-900' }}">
                             {{ $pendingJobsCount }}
                         </span>
                     @endif
@@ -116,7 +116,7 @@
                         <span>Kotak Masuk</span>
                     </div>
                     @if ($unreadContactsCount > 0)
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ request()->routeIs('admin.contacts.*') ? 'bg-amber-400 text-stone-900' : 'bg-amber-100 text-amber-800' }}">
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold {{ request()->routeIs('admin.contacts.*') ? 'bg-amber-400 text-amber-950' : 'bg-amber-100 text-amber-900' }}">
                             {{ $unreadContactsCount }}
                         </span>
                     @endif
@@ -126,7 +126,7 @@
 
         <!-- System & Shortcuts -->
         <div>
-            <span class="px-3 text-[10px] font-extrabold tracking-widest uppercase text-on-surface-variant/70 block mb-2">
+            <span class="px-3 text-[11px] font-extrabold tracking-widest uppercase text-on-surface-variant/70 block mb-2">
                 Pintasan
             </span>
             <div class="space-y-1">
@@ -159,7 +159,7 @@
                  class="w-10 h-10 rounded-xl object-cover ring-1 ring-outline-variant shrink-0">
             <div class="min-w-0 flex-1">
                 <div class="text-xs font-bold text-primary truncate">{{ auth()->user()->name }}</div>
-                <div class="text-[10px] text-secondary font-bold uppercase tracking-wider">{{ ucfirst(auth()->user()->role) }}</div>
+                <div class="text-[11px] text-secondary font-bold uppercase tracking-wider">{{ ucfirst(auth()->user()->role) }}</div>
             </div>
         </div>
         <form action="{{ route('logout') }}" method="POST">

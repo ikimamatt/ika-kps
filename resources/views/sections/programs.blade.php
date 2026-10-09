@@ -1,21 +1,21 @@
 <!-- PROGRAM KERJA & BAKTI SOSIAL ("Program Unggulan") -->
-<section class="w-full py-20 bg-surface-container-low" id="program-kerja">
-    <div class="max-w-[1280px] mx-auto px-6 flex flex-col gap-10">
+<section class="w-full py-12 sm:py-20 bg-surface-container-low" id="program-kerja">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 flex flex-col gap-8 sm:gap-10">
         <div class="flex flex-col items-center text-center gap-2 max-w-2xl mx-auto">
             <span class="font-label-lg text-label-lg text-secondary font-bold uppercase tracking-wider">Kontribusi Nyata</span>
-            <h2 class="font-headline-lg text-headline-xl text-primary tracking-tight">Program Kerja &amp; Bakti Sosial</h2>
+            <h2 class="font-headline-lg text-2xl sm:text-3xl lg:text-headline-xl text-primary tracking-tight">Program Kerja &amp; Bakti Sosial</h2>
             <p class="font-body-md text-body-md text-on-surface-variant">
                 Penyaluran energi positif alumni untuk memajukan almamater, membina adik-adik kelas, dan meringankan beban sesama warga Balikpapan.
             </p>
         </div>
 
         <!-- 4 Feature Cards Grid with badge counters and progress bars -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             @forelse ($programs as $prog)
-                <div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/40 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-transform">
+                <div class="p-5 sm:p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/40 shadow-sm flex flex-col justify-between gap-6 hover:-translate-y-1 transition-transform">
                     <div class="flex flex-col gap-4">
                         <div class="w-12 h-12 rounded-xl {{ $prog->icon_bg_class }} flex items-center justify-center">
-                            <span class="material-symbols-outlined text-[28px]">{{ $prog->icon }}</span>
+                            <span class="material-symbols-outlined text-2xl sm:text-3xl">{{ $prog->icon }}</span>
                         </div>
                         <div class="flex flex-col gap-1">
                             <h3 class="font-title-md text-title-md text-primary font-bold">{{ $prog->title }}</h3>
@@ -52,7 +52,7 @@
         <!-- View All Programs Button -->
         <div class="flex justify-center pt-2">
             <a href="{{ route('program.index') }}" 
-               class="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm hover:bg-primary-container transition-all shadow-sm flex items-center gap-2">
+               class="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm hover:bg-primary-container transition-all shadow-sm flex items-center justify-center gap-2 min-h-[44px]">
                 <span>Lihat Seluruh Inisiatif &amp; Program Kerja</span>
                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
             </a>

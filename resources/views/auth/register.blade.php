@@ -68,13 +68,17 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="level" class="block font-label-md text-xs font-bold text-on-surface uppercase tracking-wider mb-1.5">Jenjang Terakhir di KPS *</label>
-                        <select id="level" name="level" required
-                                class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
-                            <option value="sma" {{ old('level', 'sma') === 'sma' ? 'selected' : '' }}>SMA Nasional KPS Balikpapan</option>
-                            <option value="smp" {{ old('level') === 'smp' ? 'selected' : '' }}>SMP Nasional KPS Balikpapan</option>
-                            <option value="sd" {{ old('level') === 'sd' ? 'selected' : '' }}>SD Nasional KPS Balikpapan</option>
-                            <option value="tk" {{ old('level') === 'tk' ? 'selected' : '' }}>TK Nasional KPS Balikpapan</option>
-                        </select>
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">school</span>
+                            <select id="level" name="level" required
+                                    class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer">
+                                <option value="sma" {{ old('level', 'sma') === 'sma' ? 'selected' : '' }}>SMA Nasional KPS Balikpapan</option>
+                                <option value="smp" {{ old('level') === 'smp' ? 'selected' : '' }}>SMP Nasional KPS Balikpapan</option>
+                                <option value="sd" {{ old('level') === 'sd' ? 'selected' : '' }}>SD Nasional KPS Balikpapan</option>
+                                <option value="tk" {{ old('level') === 'tk' ? 'selected' : '' }}>TK Nasional KPS Balikpapan</option>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                        </div>
                     </div>
 
                     <div>
@@ -125,16 +129,32 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="password" class="block font-label-md text-xs font-bold text-on-surface uppercase tracking-wider mb-1.5">Kata Sandi *</label>
-                        <input type="password" id="password" name="password" required
-                               class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
-                               placeholder="Min. 8 karakter">
+                        <div class="relative">
+                            <input type="password" id="password" name="password" required
+                                   class="w-full pl-4 pr-11 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+                                   placeholder="Min. 8 karakter">
+                            <button type="button" 
+                                    onclick="togglePasswordVisibility('password', 'passwordToggleIcon1')" 
+                                    aria-label="Lihat atau sembunyikan kata sandi"
+                                    class="absolute right-1 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-primary transition-colors w-9 h-9 flex items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30 cursor-pointer">
+                                <span id="passwordToggleIcon1" class="material-symbols-outlined text-[18px]">visibility</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div>
                         <label for="password_confirmation" class="block font-label-md text-xs font-bold text-on-surface uppercase tracking-wider mb-1.5">Ulangi Kata Sandi *</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" required
-                               class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
-                               placeholder="Konfirmasi sandi">
+                        <div class="relative">
+                            <input type="password" id="password_confirmation" name="password_confirmation" required
+                                   class="w-full pl-4 pr-11 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+                                   placeholder="Konfirmasi sandi">
+                            <button type="button" 
+                                    onclick="togglePasswordVisibility('password_confirmation', 'passwordToggleIcon2')" 
+                                    aria-label="Lihat atau sembunyikan konfirmasi kata sandi"
+                                    class="absolute right-1 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-primary transition-colors w-9 h-9 flex items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30 cursor-pointer">
+                                <span id="passwordToggleIcon2" class="material-symbols-outlined text-[18px]">visibility</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -152,4 +172,21 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input || !icon) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    }
+</script>
+@endpush
 @endsection

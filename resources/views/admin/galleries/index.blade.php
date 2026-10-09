@@ -1,23 +1,23 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="space-y-6">
+<div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
     <!-- Header Page -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-primary tracking-tight">Manajemen Galeri &amp; Dokumentasi Foto</h1>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-primary tracking-tight">Manajemen Galeri &amp; Dokumentasi Foto</h1>
             <p class="text-xs sm:text-sm text-on-surface-variant mt-0.5">
                 Kelola arsip kenangan sejarah sekolah tempo doeloe, dokumentasi reuni akbar, dan liputan foto kegiatan alumni.
             </p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <a href="{{ route('gallery.index') }}" target="_blank"
-               class="px-3.5 py-2 rounded-xl bg-surface-container-low border border-outline-variant/40 text-primary font-bold text-xs hover:bg-surface-container transition-all flex items-center gap-1.5 shadow-2xs">
+               class="px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-primary font-bold text-xs hover:bg-surface-container transition-all flex items-center justify-center gap-1.5 shadow-2xs">
                 <span class="material-symbols-outlined text-[16px]">open_in_new</span>
                 <span>Lihat Publik</span>
             </a>
             <a href="{{ route('admin.galleries.create') }}" 
-               class="px-4 py-2 rounded-xl bg-primary text-on-primary font-bold text-xs hover:bg-primary-container transition-all flex items-center gap-1.5 shadow-sm">
+               class="px-4 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs hover:bg-primary-container transition-all flex items-center justify-center gap-1.5 shadow-sm">
                 <span class="material-symbols-outlined text-[18px]">add_photo_alternate</span>
                 <span>Buat Album Baru</span>
             </a>
@@ -25,43 +25,51 @@
     </div>
 
     <!-- Quick Stats Metric Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-xs">
-            <span class="text-xs text-on-surface-variant font-medium block">Total Album</span>
-            <span class="text-2xl font-extrabold text-primary block mt-1">{{ $stats['total'] }}</span>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+            <span class="text-2xs sm:text-xs text-on-surface-variant font-medium block">Total Album</span>
+            <span class="text-xl sm:text-2xl font-extrabold text-primary block mt-1">{{ $stats['total'] }}</span>
         </div>
-        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-xs">
-            <span class="text-xs text-emerald-700 font-medium block">Dipublikasikan</span>
-            <span class="text-2xl font-extrabold text-emerald-600 block mt-1">{{ $stats['published'] }}</span>
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+            <span class="text-2xs sm:text-xs text-emerald-700 font-medium block">Dipublikasikan</span>
+            <span class="text-xl sm:text-2xl font-extrabold text-emerald-600 block mt-1">{{ $stats['published'] }}</span>
         </div>
-        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-xs">
-            <span class="text-xs text-amber-700 font-medium block">Draft / Disimpan</span>
-            <span class="text-2xl font-extrabold text-amber-600 block mt-1">{{ $stats['draft'] }}</span>
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+            <span class="text-2xs sm:text-xs text-amber-700 font-medium block">Draft / Disimpan</span>
+            <span class="text-xl sm:text-2xl font-extrabold text-amber-600 block mt-1">{{ $stats['draft'] }}</span>
         </div>
-        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-xs">
-            <span class="text-xs text-secondary font-medium block">Total Arsip Foto</span>
-            <span class="text-2xl font-extrabold text-secondary block mt-1">{{ number_format($stats['total_photos']) }}</span>
+        <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+            <span class="text-2xs sm:text-xs text-secondary font-medium block">Total Arsip Foto</span>
+            <span class="text-xl sm:text-2xl font-extrabold text-secondary block mt-1">{{ number_format($stats['total_photos']) }}</span>
         </div>
     </div>
 
     <!-- Filter & Search Toolbar -->
-    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-xs">
-        <form action="{{ route('admin.galleries.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3 items-center justify-between">
-            <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-                <select name="status" onchange="this.form.submit()" 
-                        class="px-3 py-2 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/50">
-                    <option value="">Semua Status</option>
-                    <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Dipublikasikan</option>
-                    <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
-                </select>
+    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-3.5 sm:p-4 shadow-xs">
+        <form action="{{ route('admin.galleries.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+            <div class="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full sm:w-auto">
+                <div class="relative group w-full sm:w-auto">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[16px] pointer-events-none group-focus-within:text-secondary transition-colors">verified_user</span>
+                    <select name="status" onchange="this.form.submit()" 
+                            class="w-full pl-8 pr-7 py-2 appearance-none rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer">
+                        <option value="">Semua Status</option>
+                        <option value="published" {{ request('status') === 'published' ? 'selected' : '' }}>Dipublikasikan</option>
+                        <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[16px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                </div>
 
-                <select name="category" onchange="this.form.submit()" 
-                        class="px-3 py-2 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/50">
-                    <option value="">Semua Kategori</option>
-                    @foreach(['Nostalgia', 'Reuni', 'Kegiatan', 'Olahraga', 'Sosial', 'Lainnya'] as $cat)
-                        <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                    @endforeach
-                </select>
+                <div class="relative group w-full sm:w-auto">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[16px] pointer-events-none group-focus-within:text-secondary transition-colors">category</span>
+                    <select name="category" onchange="this.form.submit()" 
+                            class="w-full pl-8 pr-7 py-2 appearance-none rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer">
+                        <option value="">Semua Kategori</option>
+                        @foreach(['Nostalgia', 'Reuni', 'Kegiatan', 'Olahraga', 'Sosial', 'Lainnya'] as $cat)
+                            <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                        @endforeach
+                    </select>
+                    <span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[16px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                </div>
             </div>
 
             <div class="relative w-full sm:w-72">
@@ -76,7 +84,7 @@
     <!-- Table of Galleries -->
     <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl overflow-hidden shadow-xs">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
+            <table class="w-full text-left border-collapse text-xs min-w-[700px]">
                 <thead>
                     <tr class="bg-surface-container-low border-b border-outline-variant/30 text-primary font-bold">
                         <th class="py-3.5 px-4 w-16">Cover</th>
@@ -162,7 +170,7 @@
                                         @method('PATCH')
                                         <button type="submit" 
                                                 title="{{ $gallery->status === 'published' ? 'Tarik ke Draft' : 'Terbitkan Sekarang' }}"
-                                                class="p-1 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors">
+                                                class="p-1 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
                                             <span class="material-symbols-outlined text-[16px]">
                                                 {{ $gallery->status === 'published' ? 'visibility_off' : 'visibility' }}
                                             </span>
@@ -191,7 +199,7 @@
                                         @method('DELETE')
                                         <button type="submit" 
                                                 title="Hapus Album"
-                                                class="p-1.5 rounded-lg text-on-surface-variant hover:text-rose-600 hover:bg-surface-container transition-colors">
+                                                class="p-1.5 rounded-lg text-on-surface-variant hover:text-rose-600 hover:bg-surface-container transition-colors cursor-pointer">
                                             <span class="material-symbols-outlined text-[18px]">delete</span>
                                         </button>
                                     </form>

@@ -55,8 +55,10 @@
 
                 <div class="space-y-1.5">
                     <label for="status" class="block text-xs font-bold text-primary">Status Program <span class="text-rose-500">*</span></label>
-                    <select id="status" name="status" required 
-                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">verified_user</span>
+                        <select id="status" name="status" required 
+                            class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary font-medium cursor-pointer hover:border-secondary/50">
                         <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Aktif Berjalan</option>
                         <option value="upcoming" {{ old('status') === 'upcoming' ? 'selected' : '' }}>Segera Dimulai</option>
                         <option value="completed" {{ old('status') === 'completed' ? 'selected' : '' }}>Tuntas Terlaksana</option>

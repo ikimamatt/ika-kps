@@ -60,15 +60,17 @@
                            class="w-full pl-10 pr-4 py-2 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
                 </div>
 
-                <div class="w-full sm:w-48">
+                <div class="relative w-full sm:w-52 group">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">verified_user</span>
                     <select name="status" onchange="this.form.submit()"
-                            class="w-full px-3 py-2 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                            class="w-full pl-9 pr-8 py-2 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer">
                         <option value="">Semua Status</option>
                         <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending Review ({{ $stats['pending'] }})</option>
                         <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif Tayang ({{ $stats['active'] }})</option>
                         <option value="closed" {{ request('status') === 'closed' ? 'selected' : '' }}>Ditutup</option>
                         <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Kadaluarsa</option>
                     </select>
+                    <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
                 </div>
             </div>
 

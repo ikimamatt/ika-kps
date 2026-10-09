@@ -125,6 +125,8 @@ Route::middleware(['auth', 'role:admin,pengurus'])->prefix('admin')->name('admin
     Route::resource('galleries', AdminGalleryController::class);
     Route::patch('galleries/{gallery}/toggle-status', [AdminGalleryController::class, 'toggleStatus'])->name('galleries.toggle-status');
     Route::post('galleries/{gallery}/photos', [AdminGalleryController::class, 'uploadPhotos'])->name('galleries.photos.upload');
+    Route::put('galleries/{gallery}/photos', [AdminGalleryController::class, 'updatePhotos'])->name('galleries.photos.batch-update');
+    Route::patch('gallery-photos/{photo}', [AdminGalleryController::class, 'updatePhoto'])->name('galleries.photos.update');
     Route::delete('gallery-photos/{photo}', [AdminGalleryController::class, 'deletePhoto'])->name('galleries.photos.delete');
 
     // Contact & Inbox Management

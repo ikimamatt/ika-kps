@@ -47,6 +47,8 @@
                     <a href="{{ route('article.show', $featuredArticle->slug) }}" class="lg:col-span-7 relative min-h-[260px] sm:min-h-[340px] lg:min-h-[420px] overflow-hidden group block">
                         <img src="{{ $featuredArticle->image_url ?? 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1000' }}" 
                              alt="{{ $featuredArticle->title }}" 
+                             loading="lazy"
+                             onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1000'"
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent lg:hidden"></div>
                         <span class="absolute top-4 left-4 px-3 py-1.5 rounded-lg {{ $featuredArticle->badge_bg_class ?: 'bg-secondary text-white' }} text-xs font-extrabold tracking-wide shadow-xs">
@@ -107,7 +109,7 @@
                 <!-- Category Tabs / Pills -->
                 <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none text-xs font-bold">
                     <a href="{{ route('article.index', array_filter(['search' => $search])) }}" 
-                       class="px-4 py-2 rounded-xl transition-all whitespace-nowrap {{ empty($selectedCategory) ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
+                       class="px-4 py-2 min-h-[38px] inline-flex items-center rounded-xl transition-all whitespace-nowrap {{ empty($selectedCategory) ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
                         Semua Kategori
                     </a>
 
@@ -121,10 +123,10 @@
                             $count = $categoryCounts[$cat] ?? 0;
                         @endphp
                         <a href="{{ route('article.index', array_filter(['category' => $cat, 'search' => $search])) }}" 
-                           class="px-4 py-2 rounded-xl transition-all whitespace-nowrap inline-flex items-center gap-1.5 {{ $isActive ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
+                           class="px-4 py-2 min-h-[38px] rounded-xl transition-all whitespace-nowrap inline-flex items-center gap-1.5 {{ $isActive ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
                             <span>{{ $cat }}</span>
                             @if($count > 0)
-                                <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $isActive ? 'bg-white/20 text-white' : 'bg-surface-container text-on-surface-variant' }}">
+                                <span class="px-1.5 py-0.2 rounded-full text-2xs font-bold {{ $isActive ? 'bg-white/20 text-white' : 'bg-surface-container text-on-surface-variant' }}">
                                     {{ $count }}
                                 </span>
                             @endif
@@ -140,6 +142,7 @@
                     <input type="text" 
                            name="search" 
                            value="{{ $search }}" 
+                           aria-label="Cari kabar, nostalgia, atau topik artikel"
                            placeholder="Cari kabar, nostalgia, topik..."
                            class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span>
@@ -161,20 +164,24 @@
                     @php
                         $wordCount = str_word_count(strip_tags($art->body ?? $art->summary));
                         $readTime = max(1, (int) ceil($wordCount / 180));
+                        $artSvgFallback = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240'%3E%3Crect width='400' height='240' fill='%23092b5a'/%3E%3Ccircle cx='200' cy='120' r='48' fill='%230084c7' opacity='0.25'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-size='16' font-weight='700'%3EKABAR IKA KPS%3C/text%3E%3C/svg%3E";
+                        $artImgSrc = $art->image_url ?: $artSvgFallback;
                     @endphp
                     <article class="flex flex-col rounded-2xl overflow-hidden bg-surface-container-lowest border border-outline-variant/40 shadow-xs hover:shadow-md transition-all group">
                         
                         <!-- Thumbnail Image -->
                         <a href="{{ route('article.show', $art->slug) }}" class="relative h-48 sm:h-52 overflow-hidden bg-surface-container block">
-                            <img alt="{{ $art->title }}" 
+                            <img src="{{ $artImgSrc }}" 
+                                 alt="{{ $art->title }}" 
+                                 loading="lazy"
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                                 src="{{ $art->image_url ?? 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600' }}">
+                                 onerror="this.onerror=null; this.src='{{ $artSvgFallback }}';">
                             
                             <span class="absolute top-3 left-3 px-3 py-1 rounded-lg {{ $art->badge_bg_class ?: 'bg-secondary text-white' }} text-[11px] font-extrabold tracking-wide shadow-2xs">
                                 {{ $art->category }}
                             </span>
 
-                            <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs text-[10px] text-white font-medium flex items-center gap-1">
+                            <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs text-2xs text-white font-medium flex items-center gap-1">
                                 <span class="material-symbols-outlined text-[12px]">schedule</span>
                                 <span>{{ $readTime }} mnt baca</span>
                             </span>

@@ -75,29 +75,37 @@
                 <!-- Kategori Usaha -->
                 <div>
                     <label for="category" class="block text-xs font-bold text-primary uppercase tracking-wider mb-2">Kategori Industri *</label>
-                    <select id="category" name="category" required
-                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">category</span>
+                        <select id="category" name="category" required
+                            class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary font-medium cursor-pointer hover:border-secondary/50">
                         <option value="">Pilih Kategori...</option>
                         @foreach ($categories as $cat)
                             <option value="{{ $cat }}" {{ old('category') === $cat ? 'selected' : '' }}>
                                 {{ $cat }}
                             </option>
                         @endforeach
-                    </select>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                    </div>
                 </div>
 
                 <!-- Alumni Pemilik Terkait -->
                 <div>
                     <label for="alumnus_id" class="block text-xs font-bold text-primary uppercase tracking-wider mb-2">Tautkan ke Alumni (Opsional)</label>
-                    <select id="alumnus_id" name="alumnus_id"
-                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">person</span>
+                        <select id="alumnus_id" name="alumnus_id"
+                            class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary font-medium cursor-pointer hover:border-secondary/50">
                         <option value="">-- Tidak Ditautkan / Isi Manual --</option>
                         @foreach ($alumni as $alm)
                             <option value="{{ $alm->id }}" {{ old('alumnus_id') == $alm->id ? 'selected' : '' }}>
                                 {{ $alm->name }} ({{ strtoupper($alm->level) }} {{ $alm->full_year ?? '' }})
                             </option>
                         @endforeach
-                    </select>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                    </div>
                 </div>
 
                 <!-- Informasi Pemilik (Teks) -->
@@ -126,12 +134,16 @@
                 <!-- Status Publikasi -->
                 <div>
                     <label for="status" class="block text-xs font-bold text-primary uppercase tracking-wider mb-2">Status Publikasi *</label>
-                    <select id="status" name="status" required
-                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">verified_user</span>
+                        <select id="status" name="status" required
+                            class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary font-medium cursor-pointer hover:border-secondary/50">
                         <option value="published" {{ old('status', 'published') === 'published' ? 'selected' : '' }}>Dipublikasikan (Published)</option>
                         <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Menunggu Review (Pending)</option>
                         <option value="draft" {{ old('status') === 'draft' ? 'selected' : '' }}>Konsep (Draft)</option>
-                    </select>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                    </div>
                 </div>
 
                 <!-- Website / Instagram -->

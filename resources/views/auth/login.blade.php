@@ -44,8 +44,14 @@
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[20px]">key</span>
                     <input type="password" id="password" name="password" required
-                           class="w-full pl-11 pr-4 py-3 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+                           class="w-full pl-11 pr-11 py-3 rounded-xl border border-outline-variant/60 bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
                            placeholder="••••••••">
+                    <button type="button" 
+                            onclick="togglePasswordVisibility('password', 'passwordToggleIcon')" 
+                            aria-label="Lihat atau sembunyikan kata sandi"
+                            class="absolute right-1 top-1/2 -translate-y-1/2 text-on-surface-variant/70 hover:text-primary transition-colors w-10 h-10 flex items-center justify-center rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/30 cursor-pointer">
+                        <span id="passwordToggleIcon" class="material-symbols-outlined text-[20px]">visibility</span>
+                    </button>
                 </div>
             </div>
 
@@ -69,4 +75,21 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input || !icon) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    }
+</script>
+@endpush
 @endsection

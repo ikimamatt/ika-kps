@@ -25,39 +25,51 @@
             <form action="{{ route('career.index') }}" method="GET" class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari posisi, keahlian, atau nama perusahaan..." 
-                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ request('q') }}" 
+                           aria-label="Cari posisi, keahlian, atau nama perusahaan"
+                           placeholder="Cari posisi, keahlian, atau nama perusahaan..." 
+                           class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all min-h-[44px]">
                 </div>
 
-                <div class="w-full sm:w-48">
-                    <select name="job_type" onchange="this.form.submit()"
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                <div class="relative w-full sm:w-52 group">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">work</span>
+                    <select name="job_type" 
+                            aria-label="Filter tipe pekerjaan"
+                            onchange="this.form.submit()"
+                            class="w-full pl-10.5 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer min-h-[44px]">
                         <option value="">Semua Tipe Kerja</option>
                         @foreach ($jobTypes as $type)
                             <option value="{{ $type }}" {{ request('job_type') === $type ? 'selected' : '' }}>{{ $type }}</option>
                         @endforeach
                     </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
                 </div>
 
-                <div class="w-full sm:w-48">
-                    <select name="location" onchange="this.form.submit()"
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                <div class="relative w-full sm:w-52 group">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">location_on</span>
+                    <select name="location" 
+                            aria-label="Filter lokasi pekerjaan"
+                            onchange="this.form.submit()"
+                            class="w-full pl-10.5 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer min-h-[44px]">
                         <option value="">Semua Lokasi</option>
                         @foreach ($locations as $loc)
                             <option value="{{ $loc }}" {{ request('location') === $loc ? 'selected' : '' }}>{{ $loc }}</option>
                         @endforeach
                     </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
                 </div>
 
                 <div class="flex items-center gap-2">
                     <button type="submit" 
-                            class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-container transition-all shadow-sm flex items-center justify-center gap-1.5">
+                            class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs uppercase tracking-wider hover:bg-primary-container transition-all shadow-sm flex items-center justify-center gap-1.5 min-h-[44px]">
                         <span class="material-symbols-outlined text-[16px]">filter_list</span>
                         <span>Cari</span>
                     </button>
                     @if (request()->hasAny(['q', 'job_type', 'location']))
                         <a href="{{ route('career.index') }}" 
-                           class="px-3.5 py-2.5 rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container text-xs font-semibold transition-colors"
+                           class="px-3.5 py-2.5 rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container text-xs font-semibold transition-colors min-h-[44px] flex items-center justify-center"
                            title="Reset Filter">
                             Reset
                         </a>

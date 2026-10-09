@@ -38,7 +38,7 @@
   --color-on-primary-fixed: #001a40;
   --color-on-primary-fixed-variant: #2b4676;
 
-  --color-secondary: #0084c7;
+  --color-secondary: #0077a8;
   --color-secondary-container: #00a3e0;
   --color-on-secondary: #ffffff;
   --color-on-secondary-container: #004b69;
@@ -103,7 +103,62 @@
   --font-label-md: "Plus Jakarta Sans", sans-serif;
   --font-label-sm: "Plus Jakarta Sans", sans-serif;
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --icon-size-2xs: 14px;
+  --icon-size-xs: 16px;
+  --icon-size-sm: 18px;
+  --icon-size-md: 20px;
+  --icon-size-base: 24px;
+  --icon-size-lg: 28px;
 }
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flashProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+.flash-progress-bar {
+  animation: flashProgress 5s linear forwards;
+}
+
+#flash-banner:hover .flash-progress-bar,
+#flash-banner:focus-within .flash-progress-bar {
+  animation-play-state: paused;
+}
+
+.custom-dropdown-menu:not(.hidden) {
+  animation: dropdownFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.custom-dropdown-menu::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-dropdown-menu::-webkit-scrollbar-thumb {
+  background: rgba(116, 119, 128, 0.2);
+  border-radius: 9999px;
+}
+.custom-dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(116, 119, 128, 0.4);
+}
+
 
 @layer utilities {
   .font-display-lg {
@@ -191,3 +246,130 @@
     font-weight: 700;
   }
 }
+
+/* ==========================================================================
+   Mobile Navigation: Hamburger Morphing & Off-Canvas Sidebar Drawer
+   ========================================================================== */
+
+#mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 84%;
+  max-width: 340px;
+  z-index: 50;
+  background-color: var(--color-surface-container-lowest, #ffffff);
+  box-shadow: -8px 0 25px -5px rgba(9, 43, 90, 0.15), -20px 0 35px -10px rgba(9, 43, 90, 0.1);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+#mobile-menu.menu-open {
+  transform: translateX(0);
+}
+
+#mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(9, 43, 90, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+
+#mobile-menu-backdrop.backdrop-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hamburger-bar-top,
+.hamburger-bar-mid,
+.hamburger-bar-bot {
+  display: block;
+  transform-origin: center;
+  transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease, background-color 260ms ease;
+}
+
+#mobile-menu-btn.is-active,
+#admin-mobile-menu-btn.is-active {
+  background-color: rgba(0, 119, 168, 0.12) !important;
+  color: #0077a8 !important;
+}
+
+#mobile-menu-btn.is-active .hamburger-bar-top,
+#admin-mobile-menu-btn.is-active .hamburger-bar-top {
+  transform: translateY(7px) rotate(45deg);
+  background-color: #0077a8 !important;
+}
+
+#mobile-menu-btn.is-active .hamburger-bar-mid,
+#admin-mobile-menu-btn.is-active .hamburger-bar-mid {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+#mobile-menu-btn.is-active .hamburger-bar-bot,
+#admin-mobile-menu-btn.is-active .hamburger-bar-bot {
+  transform: translateY(-7px) rotate(-45deg);
+  background-color: #0077a8 !important;
+}
+
+/* Staggered slide-in for sections inside mobile sidebar drawer */
+@keyframes mobileMenuSectionSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+#mobile-menu.menu-open .menu-section {
+  animation: mobileMenuSectionSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#mobile-menu.menu-open .menu-section:nth-of-type(1) { animation-delay: 0.04s; }
+#mobile-menu.menu-open .menu-section:nth-of-type(2) { animation-delay: 0.08s; }
+#mobile-menu.menu-open .menu-section:nth-of-type(3) { animation-delay: 0.12s; }
+#mobile-menu.menu-open .menu-section:nth-of-type(4) { animation-delay: 0.16s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  /* Gentle transitions for reduced motion without breaking positioning transforms */
+  #mobile-menu {
+    transition-duration: 150ms !important;
+  }
+
+  #mobile-menu-backdrop {
+    transition-duration: 150ms !important;
+  }
+
+  .hamburger-bar-top,
+  .hamburger-bar-mid,
+  .hamburger-bar-bot {
+    transition-duration: 150ms !important;
+  }
+
+  #mobile-menu.menu-open .menu-section {
+    animation: none !important;
+  }
+
+  .flash-progress-bar {
+    animation: none !important;
+    width: 100% !important;
+  }
+}
+

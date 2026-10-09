@@ -186,7 +186,8 @@
 <!-- Interactive Pure JS Lightbox Viewer Modal -->
 <!-- ========================================== -->
 <div id="lightboxModal" 
-     class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex-col justify-between p-4 sm:p-6 transition-opacity duration-300"
+     style="display: none;"
+     class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex-col justify-between p-4 sm:p-6 transition-opacity duration-300"
      role="dialog" 
      aria-modal="true" 
      aria-label="Tampilan Layar Penuh Foto">
@@ -206,63 +207,97 @@
                 <span class="material-symbols-outlined text-[20px]">open_in_new</span>
             </a>
             <button type="button" onclick="closeLightbox()" title="Tutup (Esc)"
-                    class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center">
+                    class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center cursor-pointer">
                 <span class="material-symbols-outlined text-[24px]">close</span>
             </button>
         </div>
     </div>
 
     <!-- Lightbox Main Stage -->
-    <div class="relative flex-1 flex items-center justify-center my-4 overflow-hidden select-none">
+    <div class="relative flex-1 flex items-center justify-center my-4 overflow-hidden select-none" id="lightboxStage">
         <!-- Prev Button -->
         <button type="button" onclick="prevPhoto()" title="Foto Sebelumnya (Panah Kiri)"
-                class="absolute left-2 sm:left-6 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 text-white transition-all transform active:scale-95 flex items-center justify-center">
+                class="absolute left-2 sm:left-6 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 text-white transition-all transform active:scale-95 flex items-center justify-center cursor-pointer">
             <span class="material-symbols-outlined text-[28px]">chevron_left</span>
         </button>
 
+        <!-- Loading Spinner -->
+        <div id="lightboxLoading" class="absolute inset-0 flex items-center justify-center text-white/70 pointer-events-none hidden z-10">
+            <div class="w-10 h-10 border-3 border-white/20 border-t-secondary rounded-full animate-spin"></div>
+        </div>
+
         <!-- Current Active Image -->
-        <div class="max-w-5xl max-h-[75vh] flex items-center justify-center p-2">
-            <img id="lightboxImage" src="" alt="" 
+        <div class="max-w-5xl max-h-[75vh] flex items-center justify-center p-2 relative z-0">
+            <img id="lightboxImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="Tampilan Penuh Foto" 
                  class="max-w-full max-h-[75vh] object-contain rounded-xl shadow-2xl transition-all duration-200">
         </div>
 
         <!-- Next Button -->
         <button type="button" onclick="nextPhoto()" title="Foto Selanjutnya (Panah Kanan)"
-                class="absolute right-2 sm:right-6 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 text-white transition-all transform active:scale-95 flex items-center justify-center">
+                class="absolute right-2 sm:right-6 z-20 p-3 rounded-full bg-white/10 hover:bg-white/30 text-white transition-all transform active:scale-95 flex items-center justify-center cursor-pointer">
             <span class="material-symbols-outlined text-[28px]">chevron_right</span>
         </button>
     </div>
 
-    <!-- Lightbox Caption Bar -->
-    <div class="text-center z-10 px-4 py-2 max-w-3xl mx-auto">
+    <!-- Lightbox Caption & Hint Bar -->
+    <div class="text-center z-10 px-4 py-2 max-w-3xl mx-auto flex flex-col items-center gap-1.5">
         <p id="lightboxCaption" class="text-white/95 text-xs sm:text-sm font-medium leading-relaxed"></p>
+        <div id="lightboxHint" class="transition-opacity duration-700 pointer-events-none inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-[11px] text-white/80 border border-white/10">
+            <span class="material-symbols-outlined text-[14px]">swipe</span>
+            <span class="sm:hidden">Geser layar &larr; &rarr; untuk navigasi foto</span>
+            <span class="hidden sm:inline">Gunakan panah &larr; &rarr; untuk navigasi foto, Esc untuk menutup</span>
+        </div>
     </div>
 </div>
 
+@push('scripts')
 <script>
-    const galleryPhotos = @json($gallery->photos->map(fn($p) => [
+    const galleryPhotos = @json($gallery->photos->values()->map(fn($p) => [
         'url' => $p->image_url,
         'caption' => $p->caption ?? '',
     ]));
 
     let currentPhotoIndex = 0;
+    let hintTimeout = null;
+    let lastFocusedElement = null;
 
     function openLightbox(index) {
         if (!galleryPhotos || galleryPhotos.length === 0) return;
+        lastFocusedElement = document.activeElement;
         currentPhotoIndex = index;
         updateLightboxContent();
 
         const modal = document.getElementById('lightboxModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            // Auto focus close button for accessibility
+            const closeBtn = modal.querySelector('button[title*="Tutup"]') || modal.querySelector('button');
+            if (closeBtn) closeBtn.focus();
+        }
+
+        const hint = document.getElementById('lightboxHint');
+        if (hint) {
+            hint.classList.remove('opacity-0');
+            clearTimeout(hintTimeout);
+            hintTimeout = setTimeout(() => {
+                hint.classList.add('opacity-0');
+            }, 3500);
+        }
     }
 
     function closeLightbox() {
         const modal = document.getElementById('lightboxModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+
+            // Restore previous user focus
+            if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+                lastFocusedElement.focus();
+            }
+        }
     }
 
     function updateLightboxContent() {
@@ -273,12 +308,26 @@
         const caption = document.getElementById('lightboxCaption');
         const counter = document.getElementById('lightboxCounter');
         const downloadBtn = document.getElementById('lightboxDownloadBtn');
+        const spinner = document.getElementById('lightboxLoading');
+
+        if (spinner) spinner.classList.remove('hidden');
+
+        img.onload = () => {
+            if (spinner) spinner.classList.add('hidden');
+        };
+        img.onerror = () => {
+            if (spinner) spinner.classList.add('hidden');
+        };
 
         img.src = photo.url;
         img.alt = photo.caption || 'Foto Dokumentasi';
-        caption.textContent = photo.caption;
-        counter.textContent = `${currentPhotoIndex + 1} / ${galleryPhotos.length}`;
-        downloadBtn.href = photo.url;
+        if (caption) caption.textContent = photo.caption;
+        if (counter) counter.textContent = `${currentPhotoIndex + 1} / ${galleryPhotos.length}`;
+        if (downloadBtn) downloadBtn.href = photo.url;
+
+        if (img.complete && spinner) {
+            spinner.classList.add('hidden');
+        }
     }
 
     function prevPhoto() {
@@ -293,10 +342,10 @@
         updateLightboxContent();
     }
 
-    // Keyboard navigation
+    // Keyboard navigation & Accessibility Focus Trap
     document.addEventListener('keydown', function(e) {
         const modal = document.getElementById('lightboxModal');
-        if (modal.classList.contains('hidden')) return;
+        if (!modal || modal.style.display === 'none') return;
 
         if (e.key === 'Escape') {
             closeLightbox();
@@ -304,7 +353,71 @@
             prevPhoto();
         } else if (e.key === 'ArrowRight') {
             nextPhoto();
+        } else if (e.key === 'Tab') {
+            // Focus trap inside modal
+            const focusables = modal.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+            if (focusables.length === 0) return;
+
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
         }
     });
+
+    // Close when clicking empty dark area outside the image
+    document.getElementById('lightboxModal')?.addEventListener('click', function(e) {
+        if (e.target.id === 'lightboxModal' || e.target.id === 'lightboxStage') {
+            closeLightbox();
+        }
+    });
+
+    // Touch Swipe Navigation for Mobile Devices
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    const lightboxStage = document.getElementById('lightboxStage');
+    if (lightboxStage) {
+        lightboxStage.addEventListener('touchstart', function(e) {
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }
+        }, { passive: true });
+
+        lightboxStage.addEventListener('touchend', function(e) {
+            if (e.changedTouches && e.changedTouches.length > 0) {
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleLightboxSwipe();
+            }
+        }, { passive: true });
+    }
+
+    function handleLightboxSwipe() {
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
+        // Require horizontal swipe gesture exceeding threshold and greater than vertical movement
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+            if (diffX < 0) {
+                nextPhoto(); // Swipe ke kiri -> Foto berikutnya
+            } else {
+                prevPhoto(); // Swipe ke kanan -> Foto sebelumnya
+            }
+        }
+    }
 </script>
+@endpush
 @endsection

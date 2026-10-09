@@ -57,13 +57,17 @@
 
                     <div class="space-y-1.5">
                         <label for="job_type" class="block text-xs font-bold text-primary">Tipe Pekerjaan <span class="text-rose-500">*</span></label>
-                        <select id="job_type" name="job_type" required 
-                                class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">work</span>
+                            <select id="job_type" name="job_type" required 
+                                class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary font-medium cursor-pointer hover:border-secondary/50">
                             <option value="Full Time" {{ old('job_type') === 'Full Time' ? 'selected' : '' }}>Full Time (Penuh Waktu)</option>
                             <option value="Part Time" {{ old('job_type') === 'Part Time' ? 'selected' : '' }}>Part Time (Paruh Waktu)</option>
                             <option value="Magang" {{ old('job_type') === 'Magang' ? 'selected' : '' }}>Magang / Internship</option>
                             <option value="Kontrak" {{ old('job_type') === 'Kontrak' ? 'selected' : '' }}>Kontrak Proyek</option>
-                        </select>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                        </div>
                     </div>
 
                     <div class="space-y-1.5">
@@ -82,25 +86,33 @@
 
                     <div class="space-y-1.5">
                         <label for="status" class="block text-xs font-bold text-primary">Status Tayang</label>
-                        <select id="status" name="status" 
-                                class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">verified_user</span>
+                            <select id="status" name="status" 
+                                class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary font-medium cursor-pointer hover:border-secondary/50">
                             <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Aktif (Langsung Tayang)</option>
                             <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Pending Review</option>
                             <option value="closed" {{ old('status') === 'closed' ? 'selected' : '' }}>Ditutup</option>
-                        </select>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                        </div>
                     </div>
 
                     <div class="space-y-1.5">
                         <label for="alumnus_id" class="block text-xs font-bold text-primary">Tautkan ke Alumni Pengusung (Opsional)</label>
-                        <select id="alumnus_id" name="alumnus_id" 
-                                class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
+                        <div class="relative group">
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">person</span>
+                            <select id="alumnus_id" name="alumnus_id" 
+                                class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary font-medium cursor-pointer hover:border-secondary/50">
                             <option value="">-- Kurasi Pengurus Pusat IKA KPS --</option>
                             @foreach ($alumni as $al)
                                 <option value="{{ $al->id }}" {{ old('alumnus_id') == $al->id ? 'selected' : '' }}>
                                     {{ $al->name }} ({{ strtoupper($al->level) }} {{ $al->full_year ?? $al->class_year }})
                                 </option>
                             @endforeach
-                        </select>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                        </div>
                     </div>
                 </div>
             </div>

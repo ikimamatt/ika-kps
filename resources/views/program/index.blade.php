@@ -41,44 +41,44 @@
         </div>
 
         <!-- Metric Summary Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[24px]">assignment</span>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">assignment</span>
                 </div>
-                <div>
-                    <span class="text-2xl font-extrabold text-primary block">{{ $stats['total_programs'] }}</span>
-                    <span class="text-xs text-on-surface-variant font-medium">Total Program Inisiatif</span>
-                </div>
-            </div>
-
-            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[24px]">autorenew</span>
-                </div>
-                <div>
-                    <span class="text-2xl font-extrabold text-emerald-600 block">{{ $stats['active_programs'] }}</span>
-                    <span class="text-xs text-on-surface-variant font-medium">Sedang Berjalan</span>
+                <div class="min-w-0">
+                    <span class="text-xl sm:text-2xl font-extrabold text-primary block leading-tight tabular-nums">{{ $stats['total_programs'] }}</span>
+                    <span class="text-[11px] sm:text-xs text-on-surface-variant font-medium mt-0.5 block">Total Program</span>
                 </div>
             </div>
 
-            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[24px]">verified</span>
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">autorenew</span>
                 </div>
-                <div>
-                    <span class="text-2xl font-extrabold text-sky-600 block">{{ $stats['completed_programs'] }}</span>
-                    <span class="text-xs text-on-surface-variant font-medium">Tuntas Terlaksana</span>
+                <div class="min-w-0">
+                    <span class="text-xl sm:text-2xl font-extrabold text-emerald-600 block leading-tight tabular-nums">{{ $stats['active_programs'] }}</span>
+                    <span class="text-[11px] sm:text-xs text-on-surface-variant font-medium mt-0.5 block">Sedang Berjalan</span>
                 </div>
             </div>
 
-            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[24px]">volunteer_activism</span>
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">verified</span>
                 </div>
-                <div>
-                    <span class="text-xl font-extrabold text-primary block">Rp {{ number_format($stats['total_funds'] / 1000000, 1, ',', '.') }} Jt</span>
-                    <span class="text-xs text-on-surface-variant font-medium">Dana Terhimpun</span>
+                <div class="min-w-0">
+                    <span class="text-xl sm:text-2xl font-extrabold text-sky-600 block leading-tight tabular-nums">{{ $stats['completed_programs'] }}</span>
+                    <span class="text-[11px] sm:text-xs text-on-surface-variant font-medium mt-0.5 block">Tuntas Terlaksana</span>
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">volunteer_activism</span>
+                </div>
+                <div class="min-w-0">
+                    <span class="text-base sm:text-xl font-extrabold text-primary block leading-tight tabular-nums">Rp {{ number_format($stats['total_funds'] / 1000000, 1, ',', '.') }} Jt</span>
+                    <span class="text-[11px] sm:text-xs text-on-surface-variant font-medium mt-0.5 block">Dana Terhimpun</span>
                 </div>
             </div>
         </div>

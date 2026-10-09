@@ -192,4 +192,77 @@ class AdminGalleryCrudTest extends TestCase
 
         $this->assertDatabaseMissing('gallery_photos', ['id' => $photo->id]);
     }
+
+    public function test_admin_can_batch_update_photo_captions_and_order(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $gallery = Gallery::factory()->create();
+        $photo1 = GalleryPhoto::factory()->create([
+            'gallery_id' => $gallery->id,
+            'caption' => 'Caption Lama 1',
+            'sort_order' => 1,
+        ]);
+        $photo2 = GalleryPhoto::factory()->create([
+            'gallery_id' => $gallery->id,
+            'caption' => null,
+            'sort_order' => 2,
+        ]);
+
+        $payload = [
+            'photos' => [
+                [
+                    'id' => $photo1->id,
+                    'caption' => 'Caption Baru Foto 1',
+                    'sort_order' => 2,
+                ],
+                [
+                    'id' => $photo2->id,
+                    'caption' => 'Caption Baru Foto 2',
+                    'sort_order' => 1,
+                ],
+            ],
+        ];
+
+        $response = $this->actingAs($admin)->put(route('admin.galleries.photos.batch-update', $gallery->id), $payload);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('gallery_photos', [
+            'id' => $photo1->id,
+            'caption' => 'Caption Baru Foto 1',
+            'sort_order' => 2,
+        ]);
+
+        $this->assertDatabaseHas('gallery_photos', [
+            'id' => $photo2->id,
+            'caption' => 'Caption Baru Foto 2',
+            'sort_order' => 1,
+        ]);
+    }
+
+    public function test_admin_can_update_single_photo_caption(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $gallery = Gallery::factory()->create();
+        $photo = GalleryPhoto::factory()->create([
+            'gallery_id' => $gallery->id,
+            'caption' => 'Caption Awal',
+            'sort_order' => 1,
+        ]);
+
+        $response = $this->actingAs($admin)->patch(route('admin.galleries.photos.update', $photo->id), [
+            'caption' => 'Keterangan Tunggal Baru',
+            'sort_order' => 5,
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('gallery_photos', [
+            'id' => $photo->id,
+            'caption' => 'Keterangan Tunggal Baru',
+            'sort_order' => 5,
+        ]);
+    }
 }

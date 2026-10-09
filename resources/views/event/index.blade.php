@@ -41,34 +41,34 @@
         </div>
 
         <!-- Metric Summary Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[24px]">event_upcoming</span>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">event_upcoming</span>
                 </div>
-                <div>
-                    <span class="text-2xl font-extrabold text-primary block">{{ $stats['upcoming'] }}</span>
-                    <span class="text-xs text-on-surface-variant font-medium">Event Mendatang</span>
-                </div>
-            </div>
-
-            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[24px]">event_available</span>
-                </div>
-                <div>
-                    <span class="text-2xl font-extrabold text-primary block">{{ $stats['total'] }}</span>
-                    <span class="text-xs text-on-surface-variant font-medium">Total Seluruh Agenda</span>
+                <div class="min-w-0">
+                    <span class="text-xl sm:text-2xl font-extrabold text-primary block leading-tight tabular-nums">{{ $stats['upcoming'] }}</span>
+                    <span class="text-[11px] sm:text-xs text-on-surface-variant font-medium mt-0.5 block">Event Mendatang</span>
                 </div>
             </div>
 
-            <div class="col-span-2 md:col-span-1 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 shadow-xs flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-[24px]">how_to_reg</span>
+            <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">event_available</span>
                 </div>
-                <div>
+                <div class="min-w-0">
+                    <span class="text-xl sm:text-2xl font-extrabold text-primary block leading-tight tabular-nums">{{ $stats['total'] }}</span>
+                    <span class="text-[11px] sm:text-xs text-on-surface-variant font-medium mt-0.5 block">Total Seluruh Agenda</span>
+                </div>
+            </div>
+
+            <div class="col-span-2 md:col-span-1 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-[20px] sm:text-[24px]">how_to_reg</span>
+                </div>
+                <div class="min-w-0">
                     <span class="text-xs text-emerald-700 font-bold block uppercase tracking-wide">RSVP Online</span>
-                    <span class="text-xs text-on-surface-variant leading-tight block mt-0.5">Konfirmasi kehadiran instan langsung via akun alumni</span>
+                    <span class="text-[11px] sm:text-xs text-on-surface-variant leading-tight block mt-0.5">Konfirmasi kehadiran instan langsung via akun alumni</span>
                 </div>
             </div>
         </div>
@@ -78,17 +78,17 @@
             <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                 
                 <!-- Timeframe Tabs (Upcoming vs Past) -->
-                <div class="flex items-center gap-2 p-1 rounded-2xl bg-surface-container-low border border-outline-variant/30 text-xs font-bold shrink-0 self-start">
+                <div class="flex items-center gap-2 p-1 rounded-2xl bg-surface-container-low border border-outline-variant/30 text-xs font-bold shrink-0 self-start overflow-x-auto max-w-full">
                     <a href="{{ route('event.index', array_filter(['timeframe' => 'upcoming', 'category' => request('category'), 'search' => request('search')])) }}" 
-                       class="px-4 py-2 rounded-xl transition-all {{ $timeframe === 'upcoming' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant hover:text-primary' }}">
+                       class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center transition-all shrink-0 {{ $timeframe === 'upcoming' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant hover:text-primary' }}">
                         Event Mendatang ({{ $stats['upcoming'] }})
                     </a>
                     <a href="{{ route('event.index', array_filter(['timeframe' => 'past', 'category' => request('category'), 'search' => request('search')])) }}" 
-                       class="px-4 py-2 rounded-xl transition-all {{ $timeframe === 'past' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant hover:text-primary' }}">
+                       class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center transition-all shrink-0 {{ $timeframe === 'past' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant hover:text-primary' }}">
                         Riwayat Kegiatan
                     </a>
                     <a href="{{ route('event.index', array_filter(['timeframe' => 'all', 'category' => request('category'), 'search' => request('search')])) }}" 
-                       class="px-4 py-2 rounded-xl transition-all {{ $timeframe === 'all' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant hover:text-primary' }}">
+                       class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center transition-all shrink-0 {{ $timeframe === 'all' ? 'bg-surface-container-lowest text-primary shadow-xs' : 'text-on-surface-variant hover:text-primary' }}">
                         Semua
                     </a>
                 </div>
@@ -102,6 +102,7 @@
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
+                           aria-label="Cari agenda kegiatan atau event alumni"
                            placeholder="Cari event, lokasi, topik..."
                            class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span>
@@ -118,7 +119,7 @@
             <!-- Category Pills -->
             <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-bold">
                 <a href="{{ route('event.index', array_filter(['timeframe' => $timeframe, 'search' => request('search')])) }}" 
-                   class="px-3.5 py-1.5 rounded-xl transition-all whitespace-nowrap {{ !request('category') ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
+                   class="px-3.5 py-1.5 min-h-[38px] inline-flex items-center rounded-xl transition-all whitespace-nowrap {{ !request('category') ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
                     Semua Kategori
                 </a>
 
@@ -138,10 +139,10 @@
                         $count = $categoryCounts[$cat['id']] ?? 0;
                     @endphp
                     <a href="{{ route('event.index', array_filter(['category' => $cat['id'], 'timeframe' => $timeframe, 'search' => request('search')])) }}" 
-                       class="px-3.5 py-1.5 rounded-xl transition-all whitespace-nowrap inline-flex items-center gap-1.5 {{ $isActive ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
+                       class="px-3.5 py-1.5 min-h-[38px] rounded-xl transition-all whitespace-nowrap inline-flex items-center gap-1.5 {{ $isActive ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-lowest text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container-low' }}">
                         <span>{{ $cat['label'] }}</span>
                         @if($count > 0)
-                            <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $isActive ? 'bg-white/20 text-white' : 'bg-surface-container text-on-surface-variant' }}">
+                            <span class="px-1.5 py-0.2 rounded-full text-2xs font-bold {{ $isActive ? 'bg-white/20 text-white' : 'bg-surface-container text-on-surface-variant' }}">
                                 {{ $count }}
                             </span>
                         @endif
@@ -158,41 +159,45 @@
                         $confirmedCount = $ev->registrations_count;
                         $isPast = $ev->start_date->isPast();
                         $isFull = $ev->isFullyBooked();
+                        $evSvgFallback = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240'%3E%3Crect width='400' height='240' fill='%23092b5a'/%3E%3Ccircle cx='200' cy='120' r='48' fill='%230084c7' opacity='0.25'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-size='16' font-weight='700'%3EAGENDA IKA KPS%3C/text%3E%3C/svg%3E";
+                        $evImgSrc = $ev->image_url ?: $evSvgFallback;
                     @endphp
                     <div class="flex flex-col rounded-2xl overflow-hidden bg-surface-container-lowest border border-outline-variant/40 shadow-xs hover:shadow-md transition-all group">
                         
                         <!-- Thumbnail Image with Date Badge -->
                         <div class="relative h-48 sm:h-52 overflow-hidden bg-surface-container">
-                            <img alt="{{ $ev->title }}" 
+                            <img src="{{ $evImgSrc }}" 
+                                 alt="{{ $ev->title }}" 
+                                 loading="lazy"
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                                 src="{{ $ev->image_url ?? 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600' }}">
+                                 onerror="this.onerror=null; this.src='{{ $evSvgFallback }}';">
                             
                             <!-- Date Badge Box -->
                             <div class="absolute top-3 left-3 px-3 py-2 rounded-xl bg-surface-container-lowest/95 backdrop-blur-xs border border-outline-variant/40 text-center shadow-sm">
                                 <span class="text-base sm:text-lg font-black text-primary leading-none block">
                                     {{ $ev->start_date->format('d') }}
                                 </span>
-                                <span class="text-[10px] font-extrabold text-secondary uppercase tracking-wider block mt-0.5">
+                                <span class="text-2xs font-extrabold text-secondary uppercase tracking-wider block mt-0.5">
                                     {{ $ev->start_date->translatedFormat('M') }}
                                 </span>
                             </div>
 
                             <!-- Category Badge -->
-                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-xs text-[10px] font-extrabold text-white uppercase tracking-wider">
+                            <span class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-xs text-2xs font-extrabold text-white uppercase tracking-wider">
                                 {{ ucfirst($ev->category) }}
                             </span>
 
                             <!-- Status indicator bar -->
                             @if ($isPast)
-                                <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full bg-slate-800/80 text-white text-[10px] font-bold">
+                                <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full bg-slate-800/80 text-white text-2xs font-bold">
                                     Kegiatan Selesai
                                 </span>
                             @elseif ($isFull)
-                                <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full bg-rose-600/90 text-white text-[10px] font-bold">
+                                <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full bg-rose-600/90 text-white text-2xs font-bold">
                                     Kuota Penuh
                                 </span>
                             @else
-                                <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full bg-emerald-600/90 text-white text-[10px] font-bold">
+                                <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full bg-emerald-600/90 text-white text-2xs font-bold">
                                     Pendaftaran Buka
                                 </span>
                             @endif
@@ -228,7 +233,7 @@
                             <div class="pt-3 border-t border-outline-variant/30 space-y-3">
                                 <div class="flex items-center justify-between text-xs">
                                     <div>
-                                        <span class="text-[10px] text-on-surface-variant block">Biaya / Tiket</span>
+                                        <span class="text-2xs text-on-surface-variant block">Biaya / Tiket</span>
                                         <span class="font-extrabold text-primary">
                                             @if($ev->fee > 0)
                                                 Rp {{ number_format($ev->fee, 0, ',', '.') }}
@@ -240,7 +245,7 @@
 
                                     @if ($ev->max_participants)
                                         <div class="text-right">
-                                            <span class="text-[10px] text-on-surface-variant block">Peserta RSVP</span>
+                                            <span class="text-2xs text-on-surface-variant block">Peserta RSVP</span>
                                             <span class="font-bold text-xs {{ $isFull ? 'text-rose-600 font-extrabold' : 'text-primary' }}">
                                                 {{ $confirmedCount }} / {{ $ev->max_participants }}
                                             </span>

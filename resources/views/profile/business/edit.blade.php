@@ -90,14 +90,18 @@
                     <label for="category" class="block font-label-md text-xs font-bold text-primary">
                         Kategori Usaha <span class="text-rose-500">*</span>
                     </label>
-                    <select id="category" name="category" required
-                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
-                        @foreach ($categories as $cat)
-                            <option value="{{ $cat }}" {{ old('category', $business->category) === $cat ? 'selected' : '' }}>
-                                {{ $cat }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">category</span>
+                        <select id="category" name="category" required
+                                class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer">
+                            @foreach ($categories as $cat)
+                                <option value="{{ $cat }}" {{ old('category', $business->category) === $cat ? 'selected' : '' }}>
+                                    {{ $cat }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                    </div>
                 </div>
 
                 <div class="space-y-1.5">

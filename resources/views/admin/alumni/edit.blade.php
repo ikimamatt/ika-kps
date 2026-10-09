@@ -55,13 +55,17 @@
                 <!-- Jenjang KPS -->
                 <div>
                     <label for="level" class="block text-xs font-bold text-primary uppercase tracking-wider mb-2">Jenjang Almamater *</label>
-                    <select id="level" name="level" required
-                            class="w-full px-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary">
-                        <option value="sma" {{ old('level', $alumnus->level) === 'sma' ? 'selected' : '' }}>SMA Nasional KPS</option>
-                        <option value="smp" {{ old('level', $alumnus->level) === 'smp' ? 'selected' : '' }}>SMP Nasional KPS</option>
-                        <option value="sd" {{ old('level', $alumnus->level) === 'sd' ? 'selected' : '' }}>SD Nasional KPS</option>
-                        <option value="tk" {{ old('level', $alumnus->level) === 'tk' ? 'selected' : '' }}>TK Nasional KPS</option>
-                    </select>
+                    <div class="relative group">
+                        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">school</span>
+                        <select id="level" name="level" required
+                                class="w-full pl-10 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-low text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer">
+                            <option value="sma" {{ old('level', $alumnus->level) === 'sma' ? 'selected' : '' }}>SMA Nasional KPS</option>
+                            <option value="smp" {{ old('level', $alumnus->level) === 'smp' ? 'selected' : '' }}>SMP Nasional KPS</option>
+                            <option value="sd" {{ old('level', $alumnus->level) === 'sd' ? 'selected' : '' }}>SD Nasional KPS</option>
+                            <option value="tk" {{ old('level', $alumnus->level) === 'tk' ? 'selected' : '' }}>TK Nasional KPS</option>
+                        </select>
+                        <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
+                    </div>
                 </div>
 
                 <!-- Tahun Kelulusan / Angkatan -->

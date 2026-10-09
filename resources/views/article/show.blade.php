@@ -31,7 +31,7 @@
                 </span>
             </div>
 
-            <h1 class="text-2xl sm:text-4xl lg:text-[42px] font-extrabold text-primary tracking-tight leading-tight">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-primary tracking-tight leading-tight">
                 {{ $article->title }}
             </h1>
 
@@ -94,6 +94,8 @@
             <figure class="rounded-3xl overflow-hidden border border-outline-variant/40 shadow-sm bg-surface-container">
                 <img src="{{ $article->image_url }}" 
                      alt="{{ $article->title }}" 
+                     loading="lazy"
+                     onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1000'"
                      class="w-full max-h-[520px] object-cover">
                 @if ($article->author_and_date)
                     <figcaption class="p-3 text-[11px] text-on-surface-variant bg-surface-container-low border-t border-outline-variant/20 italic text-center">
@@ -104,7 +106,7 @@
         @endif
 
         <!-- Article Summary Lead Paragraph -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-surface-container-low border-l-4 border-secondary text-primary font-medium text-sm sm:text-base leading-relaxed">
+        <div class="p-5 sm:p-6 rounded-2xl bg-surface-container-low border border-outline-variant/30 ring-1 ring-primary/5 text-primary font-medium text-sm sm:text-base leading-relaxed">
             {{ $article->summary }}
         </div>
 
@@ -167,13 +169,13 @@
                                 <img src="{{ $rel->image_url ?? 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400' }}" 
                                      alt="{{ $rel->title }}" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                <span class="absolute top-2 left-2 px-2.5 py-0.5 rounded text-[10px] font-extrabold {{ $rel->badge_bg_class ?: 'bg-secondary text-white' }}">
+                                <span class="absolute top-2 left-2 px-2.5 py-0.5 rounded text-2xs font-extrabold {{ $rel->badge_bg_class ?: 'bg-secondary text-white' }}">
                                     {{ $rel->category }}
                                 </span>
                             </a>
                             <div class="p-4 flex-1 flex flex-col justify-between gap-3">
                                 <div class="space-y-1">
-                                    <span class="text-[10px] text-on-surface-variant block">
+                                    <span class="text-2xs text-on-surface-variant block">
                                         {{ $rel->published_at ? $rel->published_at->translatedFormat('d M Y') : 'Baru' }}
                                     </span>
                                     <h3 class="text-xs sm:text-sm font-bold text-primary group-hover:text-secondary transition-colors line-clamp-2">
@@ -206,12 +208,12 @@
 @push('scripts')
 <script>
 function copyArticleLink(btn) {
-    navigator.clipboard.writeText(window.location.href).then(() => {
+    window.copyToClipboard(window.location.href).then(() => {
         const iconSpan = btn.querySelector('.copy-icon');
         const textSpan = btn.querySelector('.copy-text');
         
         if (iconSpan) iconSpan.innerText = 'check';
-        if (textSpan) textSpan.innerText = 'Tersalin!';
+        if (textSpan) textSpan.innerText = 'Tersalin untuk Grup! ✨';
         btn.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-300');
 
         setTimeout(() => {

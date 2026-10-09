@@ -117,6 +117,13 @@
                         <span>Buka Website</span>
                     </a>
                 @endif
+
+                <button type="button" 
+                        onclick="copyBusinessLink(this)"
+                        class="px-5 py-3 rounded-xl border border-outline-variant text-primary font-bold text-xs uppercase tracking-wider hover:bg-surface-container transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span class="material-symbols-outlined text-[16px] copy-icon">share</span>
+                    <span class="copy-text">Bagikan Usaha</span>
+                </button>
             </div>
         </div>
     </div>
@@ -149,4 +156,27 @@
         </div>
     @endif
 </div>
+
+@push('scripts')
+<script>
+function copyBusinessLink(btn) {
+    window.copyToClipboard(window.location.href).then(() => {
+        const iconSpan = btn.querySelector('.copy-icon');
+        const textSpan = btn.querySelector('.copy-text');
+        
+        if (iconSpan) iconSpan.innerText = 'check';
+        if (textSpan) textSpan.innerText = 'Tersalin untuk Rekan! ✨';
+        btn.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-300');
+
+        setTimeout(() => {
+            if (iconSpan) iconSpan.innerText = 'share';
+            if (textSpan) textSpan.innerText = 'Bagikan Usaha';
+            btn.classList.remove('bg-emerald-50', 'text-emerald-700', 'border-emerald-300');
+        }, 2500);
+    }).catch(err => {
+        alert('Gagal menyalin tautan: ' + err);
+    });
+}
+</script>
+@endpush
 @endsection

@@ -1,8 +1,8 @@
 <footer class="w-full bg-primary-container text-on-primary border-t border-outline-variant/20 mt-space-xl">
-    <div class="max-w-[1280px] mx-auto px-6 py-space-xl">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-space-xl mb-space-xl">
+    <div class="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 sm:py-space-xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-space-xl mb-8 sm:mb-space-xl">
             <!-- Brand & Summary -->
-            <div class="md:col-span-2 flex flex-col gap-space-md">
+            <div class="sm:col-span-2 flex flex-col gap-space-md">
                 <div class="flex items-center gap-3">
                     <img alt="IKA KPS Balikpapan Logo" 
                          class="h-11 w-11 rounded-full object-contain ring-2 ring-white/20 bg-white p-0.5" 
@@ -25,6 +25,7 @@
                     <li class="hover:text-surface-container-lowest transition-colors"><a href="{{ route('alumni.index') }}">Direktori Angkatan</a></li>
                     <li class="hover:text-surface-container-lowest transition-colors"><a href="{{ route('business.index') }}">Katalog Bisnis Alumni</a></li>
                     <li class="hover:text-surface-container-lowest transition-colors"><a href="{{ route('program.index') }}">Program Kerja</a></li>
+                    <li class="hover:text-surface-container-lowest transition-colors"><a href="{{ route('contact.show') }}">Hubungi Sekretariat</a></li>
                 </ul>
             </div>
 
@@ -32,12 +33,29 @@
             <div class="flex flex-col gap-space-sm">
                 <span class="font-label-lg text-label-lg text-secondary-fixed-dim uppercase tracking-wider font-bold">Sekretariat</span>
                 <p class="font-body-sm text-body-sm text-surface-container-highest/70 leading-relaxed">
-                    {{ \App\Models\Setting::get('contact_address', 'Kompleks Sekolah Nasional KPS Balikpapan, Jl. Sport No. 1, Prapatan, Kota Balikpapan, Kalimantan Timur 76111') }}<br>
-                    @php
-                        $contactEmail = \App\Models\Setting::get('contact_email', 'sekretariat@ika-kps.id');
-                    @endphp
-                    Email: <a href="mailto:{{ $contactEmail }}" class="underline hover:text-white">{{ $contactEmail }}</a>
+                    {{ \App\Models\Setting::get('contact_address', 'Kompleks Sekolah Nasional KPS Balikpapan, Jl. Sport No. 1, Prapatan, Kota Balikpapan, Kalimantan Timur 76111') }}
                 </p>
+
+                @php
+                    $contactEmail = \App\Models\Setting::get('contact_email', 'sekretariat@ika-kps.id');
+                    $waNum = \App\Models\Setting::get('contact_whatsapp', '08115401985');
+                    $waClean = preg_replace('/[^0-9]/', '', $waNum);
+                    if (str_starts_with($waClean, '0')) {
+                        $waClean = '62' . substr($waClean, 1);
+                    }
+                @endphp
+                <div class="flex flex-col gap-1.5 text-xs text-surface-container-highest/80 pt-1">
+                    <a href="mailto:{{ $contactEmail }}" class="inline-flex items-center gap-1.5 hover:text-white transition-colors">
+                        <span class="material-symbols-outlined text-[15px]">mail</span>
+                        <span>{{ $contactEmail }}</span>
+                    </a>
+                    @if ($waNum)
+                        <a href="https://wa.me/{{ $waClean }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-white transition-colors">
+                            <x-icons.whatsapp class="w-3.5 h-3.5 fill-current text-emerald-400 shrink-0" />
+                            <span>{{ $waNum }} (WhatsApp)</span>
+                        </a>
+                    @endif
+                </div>
 
                 @php
                     $ig = \App\Models\Setting::get('social_instagram');
@@ -48,21 +66,24 @@
                     <div class="flex items-center gap-2 pt-2">
                         @if ($ig)
                             <a href="{{ $ig }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-8 h-8 rounded-lg bg-white/10 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all" 
+                               class="w-10 h-10 rounded-xl bg-white/10 hover:bg-gradient-to-tr hover:from-[#f09433] hover:via-[#dc2743] hover:to-[#bc1888] text-white flex items-center justify-center transition-all" 
+                               aria-label="Instagram Resmi IKA KPS"
                                title="Instagram">
                                 <x-icons.instagram class="w-4 h-4 fill-current" />
                             </a>
                         @endif
                         @if ($li)
                             <a href="{{ $li }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#0077B5] text-white flex items-center justify-center transition-all" 
+                               class="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#0077B5] text-white flex items-center justify-center transition-all" 
+                               aria-label="LinkedIn Resmi IKA KPS"
                                title="LinkedIn">
                                 <x-icons.linkedin class="w-4 h-4 fill-current" />
                             </a>
                         @endif
                         @if ($yt)
                             <a href="{{ $yt }}" target="_blank" rel="noopener noreferrer" 
-                               class="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#FF0000] text-white flex items-center justify-center transition-all" 
+                               class="w-10 h-10 rounded-xl bg-white/10 hover:bg-[#FF0000] text-white flex items-center justify-center transition-all" 
+                               aria-label="YouTube Resmi IKA KPS"
                                title="YouTube">
                                 <x-icons.youtube class="w-4 h-4 fill-current" />
                             </a>
@@ -72,11 +93,11 @@
             </div>
         </div>
 
-        <div class="border-t border-surface-container-high/10 pt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-sm font-label-md text-label-md text-surface-container-highest/60">
+        <div class="border-t border-surface-container-high/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left font-label-md text-xs sm:text-label-md text-surface-container-highest/60">
             <p>© {{ date('Y') }} Ikatan Keluarga Alumni KPS Balikpapan. Hak Cipta Dilindungi.</p>
-            <div class="flex items-center gap-space-md">
-                <a class="hover:text-surface-container-lowest transition-colors" href="#">Kebijakan Privasi</a>
-                <a class="hover:text-surface-container-lowest transition-colors" href="#">Syarat &amp; Ketentuan</a>
+            <div class="flex items-center gap-4 sm:gap-space-md">
+                <a class="hover:text-surface-container-lowest transition-colors py-1" href="#">Kebijakan Privasi</a>
+                <a class="hover:text-surface-container-lowest transition-colors py-1" href="#">Syarat &amp; Ketentuan</a>
             </div>
         </div>
     </div>

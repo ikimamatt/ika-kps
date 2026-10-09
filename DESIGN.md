@@ -115,6 +115,12 @@ typography:
     fontWeight: '700'
     lineHeight: 14px
     letterSpacing: 0.05em
+  label-2xs:
+    fontFamily: Plus Jakarta Sans
+    fontSize: 10px
+    fontWeight: '700'
+    lineHeight: 14px
+    letterSpacing: 0.04em
 rounded:
   sm: 0.25rem
   DEFAULT: 0.5rem
@@ -145,12 +151,12 @@ The visual style blends **Corporate Modernism** with **Maritime/Petroleum Academ
 ## Colors
 The palette directly extracts and codifies the official heraldic emblem of IKA KPS:
 - **Primary Navy (`#092B5A`):** The foundational pillar representing institutional stability, trust, depth, and the iconic oil derrick structure. Used for major surfaces, headers, high-emphasis text, and core borders.
-- **Secondary Cyan (`#00A3E0`):** Drawn from the roundel core. Conveys optimism, youthful connection, clarity, and regional pride along the coastal energy hub. Applied to active states, badges, link highlights, and secondary actions.
+- **Secondary Cyan (`#00A3E0` / `#0077A8`):** Drawn from the roundel core. Conveys optimism, youthful connection, clarity, and regional pride along the coastal energy hub. `#0077A8` is used for high-contrast WCAG AA accessible text; `#00A3E0` for vibrant accents, badges, and graphical motifs.
 - **Tertiary Flame Red (`#D92525`):** Derived from the burning torch crowning the derrick. Represents the flame of continuous knowledge (*semangat membara*) and passion. Reserved strictly for critical calls to action, active alerts, urgent announcements, and celebratory achievements.
 - **Neutral Foundation (`#FFFFFF` & `#F4F8FC`):** Pure white combined with an ultra-clean cool ice tint to provide high contrast, uncluttered layouts, and crisp readability. Slate neutrals (`#4A5568`, `#1A202C`) provide intermediate typographical balance.
 
 ## Typography
-Plus Jakarta Sans delivers a geometric, precise, and approachable typographic architecture. Headlines leverage bold and extra-bold weights with negative tracking to convey institutional strength similar to academic crests. Body text uses regular and medium weights with balanced line heights to maximize legibility across alumni directories, event schedules, and thought leadership articles.
+Plus Jakarta Sans delivers a geometric, precise, and approachable typographic architecture. Headlines leverage bold and extra-bold weights with negative tracking to convey institutional strength similar to academic crests. Body text uses regular and medium weights with balanced line heights to maximize legibility across alumni directories, event schedules, and thought leadership articles. Micro-badges and status indicators utilize `label-2xs` (`10px` / `text-2xs`). Optical sizing for Google Material Symbols icons (15px, 18px, 20px, 22px, 28px) follows standard icon font optical standards.
 
 ## Layout & Spacing
 The layout adheres to an 8-point geometric scale driven by structural harmony:

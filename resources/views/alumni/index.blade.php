@@ -25,20 +25,24 @@
                     <input type="text" 
                            name="q" 
                            value="{{ request('q') }}" 
+                           aria-label="Cari nama, profesi, instansi, atau domisili alumni"
                            placeholder="Cari nama, profesi, instansi, atau domisili..." 
-                           class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                           class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all min-h-[44px]">
                 </div>
 
                 <!-- Jenjang Selector -->
-                <div class="w-full md:w-52">
+                <div class="relative w-full md:w-56 group">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70 text-[18px] pointer-events-none group-focus-within:text-secondary transition-colors">school</span>
                     <select name="level" 
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                            aria-label="Pilih jenjang sekolah KPS"
+                            class="w-full pl-10.5 pr-9 py-2.5 appearance-none rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-on-surface text-sm font-medium focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary hover:border-secondary/50 transition-all cursor-pointer min-h-[44px]">
                         <option value="">Semua Jenjang</option>
                         <option value="sma" {{ request('level') === 'sma' ? 'selected' : '' }}>SMA Nasional KPS</option>
                         <option value="smp" {{ request('level') === 'smp' ? 'selected' : '' }}>SMP Nasional KPS</option>
                         <option value="sd" {{ request('level') === 'sd' ? 'selected' : '' }}>SD Nasional KPS</option>
                         <option value="tk" {{ request('level') === 'tk' ? 'selected' : '' }}>TK Nasional KPS</option>
                     </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 text-[18px] pointer-events-none group-focus-within:text-secondary group-focus-within:rotate-180 transition-transform duration-200">expand_more</span>
                 </div>
 
                 <!-- Year Input -->
@@ -46,20 +50,21 @@
                     <input type="text" 
                            name="year" 
                            value="{{ request('year') }}" 
+                           aria-label="Tahun kelulusan alumni"
                            placeholder="Tahun (2010)" 
-                           class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all">
+                           class="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-lowest text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all min-h-[44px]">
                 </div>
 
                 <!-- Submit Button -->
                 <button type="submit" 
-                        class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-sm hover:bg-primary-container transition-all flex items-center justify-center gap-2 shrink-0">
+                        class="px-6 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-sm hover:bg-primary-container transition-all flex items-center justify-center gap-2 shrink-0 min-h-[44px]">
                     <span class="material-symbols-outlined text-[18px]">filter_list</span>
                     <span>Cari</span>
                 </button>
 
                 @if (request()->hasAny(['q', 'level', 'year']))
                     <a href="{{ route('alumni.index') }}" 
-                       class="px-4 py-2.5 rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container-high font-semibold text-sm transition-all text-center">
+                       class="px-4 py-2.5 rounded-xl border border-outline-variant text-on-surface-variant hover:bg-surface-container-high font-semibold text-sm transition-all text-center min-h-[44px] flex items-center justify-center">
                         Reset
                     </a>
                 @endif
@@ -69,23 +74,23 @@
             <div class="flex items-center gap-2 mt-4 pt-4 border-t border-outline-variant/30 overflow-x-auto text-xs pb-1">
                 <span class="font-bold text-on-surface-variant shrink-0 mr-1">Filter Cepat:</span>
                 <a href="{{ route('alumni.index', array_merge(request()->except('level'), ['level' => ''])) }}" 
-                   class="px-3 py-1 rounded-lg {{ !request('level') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors">
+                   class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center font-semibold {{ !request('level') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors shrink-0">
                     Semua
                 </a>
                 <a href="{{ route('alumni.index', array_merge(request()->except('level'), ['level' => 'sma'])) }}" 
-                   class="px-3 py-1 rounded-lg {{ request('level') === 'sma' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors">
+                   class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center font-semibold {{ request('level') === 'sma' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors shrink-0">
                     SMA KPS
                 </a>
                 <a href="{{ route('alumni.index', array_merge(request()->except('level'), ['level' => 'smp'])) }}" 
-                   class="px-3 py-1 rounded-lg {{ request('level') === 'smp' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors">
+                   class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center font-semibold {{ request('level') === 'smp' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors shrink-0">
                     SMP KPS
                 </a>
                 <a href="{{ route('alumni.index', array_merge(request()->except('level'), ['level' => 'sd'])) }}" 
-                   class="px-3 py-1 rounded-lg {{ request('level') === 'sd' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors">
+                   class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center font-semibold {{ request('level') === 'sd' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors shrink-0">
                     SD KPS
                 </a>
                 <a href="{{ route('alumni.index', array_merge(request()->except('level'), ['level' => 'tk'])) }}" 
-                   class="px-3 py-1 rounded-lg {{ request('level') === 'tk' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors">
+                   class="px-3.5 py-2 rounded-xl min-h-[38px] inline-flex items-center justify-center font-semibold {{ request('level') === 'tk' ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-container-highest/80' }} transition-colors shrink-0">
                     TK KPS
                 </a>
             </div>
@@ -101,6 +106,8 @@
                             <div class="flex items-start justify-between gap-3 mb-4">
                                 <img src="{{ $item->avatar_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($item->name) . '&background=002D62&color=fff&size=150' }}" 
                                      alt="{{ $item->name }}" 
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($item->name) }}&background=002D62&color=fff&size=150';"
                                      class="w-16 h-16 rounded-2xl object-cover ring-2 ring-outline-variant/30 group-hover:ring-secondary/50 transition-all">
                                 
                                 <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider {{ $item->level === 'sma' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : ($item->level === 'smp' ? 'bg-sky-50 text-sky-700 border border-sky-200' : 'bg-amber-50 text-amber-700 border border-amber-200') }}">

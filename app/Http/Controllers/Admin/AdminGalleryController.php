@@ -202,4 +202,59 @@ class AdminGalleryController extends Controller
 
         return back()->with('success', 'Foto berhasil dihapus dari album.');
     }
+
+    /**
+     * Batch update captions and sort orders for photos in a gallery.
+     */
+    public function updatePhotos(Request $request, Gallery $gallery): RedirectResponse
+    {
+        $validated = $request->validate([
+            'photos' => ['required', 'array'],
+            'photos.*.id' => ['required', 'integer'],
+            'photos.*.caption' => ['nullable', 'string', 'max:255'],
+            'photos.*.sort_order' => ['nullable', 'integer', 'min:0'],
+        ], [
+            'photos.required' => 'Tidak ada data foto yang dikirim.',
+            'photos.*.caption.max' => 'Keterangan foto maksimal 255 karakter.',
+            'photos.*.sort_order.integer' => 'Nomor urutan harus berupa angka bulat positif.',
+        ]);
+
+        $updatedCount = 0;
+        foreach ($validated['photos'] as $item) {
+            $photo = GalleryPhoto::where('id', $item['id'])
+                ->where('gallery_id', $gallery->id)
+                ->first();
+
+            if ($photo) {
+                $photo->update([
+                    'caption' => $item['caption'] !== null && trim($item['caption']) !== '' ? trim($item['caption']) : null,
+                    'sort_order' => isset($item['sort_order']) && $item['sort_order'] !== '' ? (int) $item['sort_order'] : $photo->sort_order,
+                ]);
+                $updatedCount++;
+            }
+        }
+
+        return back()->with('success', "Keterangan dan urutan untuk {$updatedCount} foto berhasil disimpan.");
+    }
+
+    /**
+     * Update a single photo's caption and sort order.
+     */
+    public function updatePhoto(Request $request, GalleryPhoto $photo): RedirectResponse
+    {
+        $validated = $request->validate([
+            'caption' => ['nullable', 'string', 'max:255'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+        ], [
+            'caption.max' => 'Keterangan foto maksimal 255 karakter.',
+            'sort_order.integer' => 'Nomor urutan harus berupa angka bulat positif.',
+        ]);
+
+        $photo->update([
+            'caption' => $validated['caption'] !== null && trim($validated['caption']) !== '' ? trim($validated['caption']) : null,
+            'sort_order' => isset($validated['sort_order']) && $validated['sort_order'] !== '' ? (int) $validated['sort_order'] : $photo->sort_order,
+        ]);
+
+        return back()->with('success', 'Keterangan foto berhasil disimpan.');
+    }
 }

@@ -10,6 +10,5 @@
     @include('sections.programs')
     @include('sections.news-gallery')
     @include('sections.registration-cta')
-    @include('sections.contact-hub')
 </div>
 @endsection

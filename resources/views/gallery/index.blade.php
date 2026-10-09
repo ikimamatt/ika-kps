@@ -80,7 +80,7 @@
                 <!-- Category Pills -->
                 <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none text-xs font-bold">
                     <a href="{{ route('gallery.index', array_filter(['search' => request('search')])) }}" 
-                       class="px-4 py-2 rounded-xl whitespace-nowrap transition-all {{ !request('category') ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-low text-on-surface hover:bg-surface-container' }}">
+                       class="px-4 py-2 min-h-[38px] inline-flex items-center rounded-xl whitespace-nowrap transition-all {{ !request('category') ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-low text-on-surface hover:bg-surface-container' }}">
                         Semua Album ({{ $stats['total_albums'] }})
                     </a>
 
@@ -89,7 +89,7 @@
                             $catCount = $categoryCounts[$cat] ?? 0;
                         @endphp
                         <a href="{{ route('gallery.index', array_filter(['category' => $cat, 'search' => request('search')])) }}" 
-                           class="px-4 py-2 rounded-xl whitespace-nowrap transition-all {{ request('category') === $cat ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-low text-on-surface hover:bg-surface-container' }}">
+                           class="px-4 py-2 min-h-[38px] inline-flex items-center rounded-xl whitespace-nowrap transition-all {{ request('category') === $cat ? 'bg-primary text-on-primary shadow-xs' : 'bg-surface-container-low text-on-surface hover:bg-surface-container' }}">
                             {{ $cat }}
                             @if($catCount > 0)
                                 <span class="opacity-75 text-2xs ml-1">({{ $catCount }})</span>
@@ -106,6 +106,7 @@
                     <input type="text" 
                            name="search" 
                            value="{{ request('search') }}" 
+                           aria-label="Cari album kenangan alumni"
                            placeholder="Cari album kenangan..." 
                            class="w-full pl-10 pr-4 py-2 rounded-xl border border-outline-variant/50 bg-surface-container-lowest text-xs focus:outline-none focus:ring-2 focus:ring-secondary/50">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
@@ -130,6 +131,8 @@
                             @if ($gallery->cover_image_url)
                                 <img src="{{ $gallery->cover_image_url }}" 
                                      alt="{{ $gallery->title }}" 
+                                     loading="lazy"
+                                     onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1511578314322-379afb476865?w=600'"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-outline-variant">
