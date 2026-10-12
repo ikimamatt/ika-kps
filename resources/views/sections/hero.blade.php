@@ -48,7 +48,7 @@
                 <div class="absolute -bottom-6 -left-6 w-72 h-72 bg-primary/10 rounded-full filter blur-3xl -z-10"></div>
                 <!-- Hero Image Container -->
                 <div class="rounded-2xl overflow-hidden shadow-2xl border-4 border-surface-container-lowest relative bg-primary-container">
-                    <img alt="Reuni Akbar Alumni KPS Balikpapan" class="w-full h-80 sm:h-[420px] object-cover object-center transform hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AEtjO1VaI29n2Tb_5CyVDhYocmqJC3rC51n3rkyHlZQpKJfWvrOoRy_BCAxwtVoLSMUFNE7yv82soBwEFhwFKXzD2dUwgn-vL7B9MQlUcj24gpiRQt35RcfL_U94gSi-8M1uaqKu5jVcVEsBitZavWygThuLB6QaJCqCotJXuXrOBt1wSIYT4tbO3VrDzB6QW-DEraeO-AkYdzocmON6CuzXDM0VyfhWGw9JQ0EfR5Kioc4XmjevvmXKn6_DBQlh">
+                    <img alt="Reuni Akbar Alumni KPS Balikpapan" class="w-full h-80 sm:h-[420px] object-cover object-center transform hover:scale-105 transition-transform duration-700" src="{{ asset('img/Gemini_Generated_Image_ot4c7ot4c7ot4c7o.jpg') }}">
                     <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent"></div>
                     <div class="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <div class="flex items-center gap-3">
